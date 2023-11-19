@@ -17,8 +17,6 @@ const novelAnalyzer = require('./novelAnalyzer');
 
 const app = express();
 
-require('dotenv').config({ path: 'backend/.env' });
-
 // DB更新用 -----------------------------------------
 // MongoDBの接続情報→.envに移す
 const mongoPass = process.env.MONGO_PASS;
