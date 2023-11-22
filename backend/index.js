@@ -299,7 +299,7 @@ const task = cron.schedule('0 0 * * *', async () => {
   updateLib();
 });
 
-task.start();
+// task.start();
 
 const args = process.argv.slice(2);
 
