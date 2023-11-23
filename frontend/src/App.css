@@ -69,13 +69,6 @@ body {
     align-items:flex-start;
 }
 
-.ui-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-top: 20px;
-}
-
 .url-ui-container {
     display: flex;
     flex-direction: column;
@@ -184,6 +177,17 @@ ul li {
 }
 
 @media (max-width: 751px) {
+  .search_ui {
+    display: block;
+  }
+
+  .ui-container {
+    display: block;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 20px;
+  }
+
   ol li {
     border: solid 2px #dadada;/*下に灰色線*/
     background: whitesmoke;
@@ -201,6 +205,17 @@ ul li {
 }
 
 @media (min-width: 752px) {
+  .search_ui {
+    display: flex;
+  }
+
+  .ui-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 20px;
+  }
+
   ol li {
     border: solid 2px #dadada;/*下に灰色線*/
     background: whitesmoke;

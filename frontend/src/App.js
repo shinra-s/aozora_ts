@@ -26,6 +26,8 @@ function App() {
   return (
     <div>
       <h1>青空文庫.split</h1>
+      青空文庫は<a href="https://www.aozora.gr.jp/index.html">こちら</a>。募金も<a href="https://honnomirai.net/">どうぞ</a>。
+      <hr color='#007bff'></hr>
       <NovelChoicer
         setContentIndex={setContentIndex}
         setNovel={setNovel}

@@ -26,6 +26,7 @@ function PlayHandler ({
             <button class="ui-button" onClick={() => setIsPlaying(prevIsPlaying => !prevIsPlaying)}>
               {isPlaying ? '停止' : '再生'}
             </button>
+            <div display='flex'>
             <label htmlFor="check">
             連続再生（章終わりで停止しない）：
             </label>
@@ -36,6 +37,7 @@ function PlayHandler ({
               onChange={() => setIsConPlay(prevState => !prevState)}
               disabled={isPlaying}
             />
+            </div>
         </div>
     );
 }

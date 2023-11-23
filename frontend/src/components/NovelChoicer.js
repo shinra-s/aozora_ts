@@ -189,7 +189,8 @@ export default function NovelChoicer ({
     return (
         <div>
             <div class='novel_choicer'>
-                <div display='flex'>
+                <div class='search_ui'>
+                    <div display='flex'>
                     <input
                         type='text'
                         value={keyword}
@@ -201,6 +202,8 @@ export default function NovelChoicer ({
                         onClick={() => getSearchResult()}>
                         検索
                     </button>
+                    </div>
+                    <div display='flex'>
                     <label>
                         <input
                             type="radio"
@@ -219,7 +222,8 @@ export default function NovelChoicer ({
                         />
                         著者検索
                     </label>
-                    <p><b> {statusNovelUrl}</b></p>
+                    </div>
+                    <p style={{height:'25px'}}><b> {statusNovelUrl}</b></p>
                 </div>
                 <div class='contents_list_box'>
                     <ResultList 
