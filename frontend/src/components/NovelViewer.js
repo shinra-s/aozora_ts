@@ -48,7 +48,7 @@ export default function NovelViewer ({
               if(firstFlag){
                 firstFlag = !firstFlag;
               } else {
-                tmpString += '<br><br>';
+                tmpString += '<br><br><font color="gray" size="-1">'+index+'</font><br>';
               }
             }
 
