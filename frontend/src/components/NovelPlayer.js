@@ -47,14 +47,14 @@ function PlayHandler ({
 function SeekHandler ({
     novel,
     contentIndex,
+    tmpIntCIValue,
+    setTmpIntCIValue,
     setCurrentIndex,
     setAllString,
     toAllString,
     isPlaying,
 }) {
-    //入力中の再生位置
-    const [tmpIntCIValue, setTmpIntCIValue] = useState(0);
-
+    
     //入力中の再生位置の更新処理
     useEffect(() => {
         // テキストの入力終了時の処理
@@ -77,7 +77,11 @@ function SeekHandler ({
     }, [tmpIntCIValue]);
     
     const handleTmpCIChange = (e) => {
-      setTmpIntCIValue(parseInt(e.target.value));
+      if (!(e.target.value === null || e.target.value === '')) {
+        setTmpIntCIValue(parseInt(e.target.value));
+      } else {
+        setTmpIntCIValue(0); 
+      }
     };
 
     return (
@@ -167,6 +171,14 @@ export default function NovelPlayer ({
     //連続再生のフラグ
     const [isConPlay, setIsConPlay] = useState(false);
 
+    //入力中の再生位置
+    const [tmpIntCIValue, setTmpIntCIValue] = useState(0);
+
+    const handleCurrentIndex = (int) => {
+      setCurrentIndex(int);
+      setTmpIntCIValue(int);
+    };
+
     //再生停止の処理
     useEffect(() => {
         let intervalId;
@@ -177,7 +189,7 @@ export default function NovelPlayer ({
     
         if(isPlaying) {
           intervalId = setInterval(() => {
-            setCurrentIndex((prevIndex) => {
+            handleCurrentIndex((prevIndex) => {
               if (prevIndex >= novel.mainText[contentIndex][1].length - 1) {
                 if(isConPlay){
                   setContentIndex(contentIndex + 1);
@@ -216,6 +228,8 @@ export default function NovelPlayer ({
                 novel={novel}
                 contentIndex={contentIndex}
                 isPlaying={isPlaying}
+                tmpIntCIValue={tmpIntCIValue}
+                setTmpIntCIValue={setTmpIntCIValue}
                 setCurrentIndex={setCurrentIndex}
                 setAllString={setAllString}
                 toAllString={toAllString}
