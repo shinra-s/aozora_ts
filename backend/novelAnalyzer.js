@@ -141,14 +141,12 @@ function convertToBunsetsuArray(tokens) {
   let afterSahenNoun = false;
   let afterBracket = false;
   let afterPeriod = false;
+  let htmlTagFlag = false;
+  let afterHtmlTag = false;
 
   // 形態素単位に処理して、文節の切れ目を判断して文節に成形する
   tokens.forEach((token) => {
     const surface = token.surface_form;
-    // eslint-disable-next-line no-irregular-whitespace
-    // if (surface === ' ' || surface === '　') {
-    //  return;
-    // }
     const { pos } = token;
     const posDetail = `${token.pos_detail_1}/${token.pos_detail_2}/${token.pos_detail_3}/${token.conjugated_type}`;
     let noBreak = !(breakPos.includes(pos));
@@ -158,18 +156,30 @@ function convertToBunsetsuArray(tokens) {
     noBreak = noBreak || afterPrepos;
     noBreak = noBreak || (afterSahenNoun && (pos === '動詞') && posDetail.includes('サ変・スル'));
     noBreak = noBreak || afterBracket;
+    noBreak = noBreak || htmlTagFlag;
+    noBreak = noBreak || afterHtmlTag;
 
-    if (noBreak === false || afterPeriod) {
+    if (!noBreak || (afterPeriod && !(surface.includes('」') || surface.includes('』')))
+        || surface.includes('『') || surface.includes('「')
+        || (!htmlTagFlag && surface.includes('<'))) {
       resultArray.push('');
     }
     resultArray[resultArray.length - 1] += surface;
     afterPrepos = pos === '接頭詞';
     afterSahenNoun = posDetail.includes('サ変接続');
-    afterBracket = surface.includes('（') || surface.includes('『');
+    afterBracket = surface.includes('（') || surface.includes('『') || surface.includes('「');
+    afterHtmlTag = surface.includes('>');
     afterPeriod = surface.includes('。');
+    if (htmlTagFlag) {
+      if (resultArray[resultArray.length - 1].includes('ruby')) {
+        htmlTagFlag = !(surface.includes('>') && resultArray[resultArray.length - 1].includes('/ruby'));
+      } else {
+        htmlTagFlag = !surface.includes('>');
+      }
+    } else {
+      htmlTagFlag = surface.includes('<');
+    }
   });
-
-  // resultArray = resultArray.filter(checkEmpty);
 
   for (let i = 0; ;) {
     if (!checkEmpty(resultArray[i])) {
@@ -207,9 +217,25 @@ exports.getAuthor = (str) => {
   }
 };
 
+function removePreprocessMark(str) {
+  // console.log(str);
+  const reGaijiPattern = /<<<(.*?)>>>/g;
+  const reGaijiStrTmp = str.replace(reGaijiPattern, '<img src="$1" class="gaiji">');
+  const reGaijiStr = reGaijiStrTmp.replace(/\.\.\/\.\.\/\.\.\//g, 'https://www.aozora.gr.jp/');
+  const reRubyPattern = /{{{(.*?)（(.*?)）}}}/g;
+  return reGaijiStr.replace(reRubyPattern, '<ruby><rb>$1</rb><rp>（</rp><rt>$2</rt><rp>）</rp></ruby>');
+}
+
 // 章ごとに分割した文字列を返す
 function getTextArray(str, contents) {
-  const dom = new JSDOM(str);
+  // 外字とふりがな用の事前処理
+  // console.log(str);
+  const gaijiPattern = /<img gaiji="gaiji" src="(.*?)" alt="(.*?)" class="gaiji" \/>/g;
+  const gaijiRmStr = str.replace(gaijiPattern, '<<<$1>>>');
+  const rubyPattern = /<ruby><rb>(.*?)<\/rb><rp>（<\/rp><rt>(.*?)<\/rt><rp>）<\/rp><\/ruby>/g;
+  const preProcessedStr = gaijiRmStr.replace(rubyPattern, '{{{$1（$2）}}}');
+  
+  const dom = new JSDOM(preProcessedStr);
   const { document } = dom.window;
   const elements = document.querySelectorAll('.main_text');
 
@@ -223,7 +249,7 @@ function getTextArray(str, contents) {
   const divStr = '[[[[[div]]]]]';
 
   if (contents === null || contents[0] === null || !Array.isArray(contents[0])) {
-    return [['本文', Array.from(elements).map((element) => element.textContent)[0]]];
+    return [['本文', Array.from(elements).map((element) => removePreprocessMark(element.textContent))[0]]];
   }
 
   if (aTags !== null && contents[0][0] !== '本文') {
@@ -247,7 +273,7 @@ function getTextArray(str, contents) {
     });
 
     // 区切り文字で分割し、目次配列と本文を結合
-    const resText = Array.from(elements).map((element) => element.textContent)[0];
+    const resText = Array.from(elements).map((element) => removePreprocessMark(element.textContent))[0];
     const resStrArray = resText.split(divStr);
 
     const resArray = [];

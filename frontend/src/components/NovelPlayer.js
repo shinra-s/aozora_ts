@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import parse from 'html-react-parser';
 import '../App.css';
 
 //再生文字列表示カード
@@ -9,7 +10,7 @@ function DisplayCard ({
 }) {
     return (
         <div class="card">
-            <p>{novel?.mainText?.[contentIndex]?.[1]?.[currentIndex]}</p>
+            <p>{parse(novel?.mainText?.[contentIndex]?.[1]?.[currentIndex])}</p>
           </div>
     );
 }

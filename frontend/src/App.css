@@ -176,6 +176,11 @@ ul li {
   font-weight: bold;
 }
 
+.gaiji{
+  width: 1em;
+  height: 1em;
+}
+
 @media (max-width: 751px) {
   .search_ui {
     display: block;
