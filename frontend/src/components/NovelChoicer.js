@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../App.css';
 import { ImNewTab } from 'react-icons/im';
+import { useLocation } from 'react-router-dom';
 
 // カタカナ判定
 const containKatakana = (str) => {
@@ -126,30 +127,54 @@ export default function NovelChoicer ({
         isPlaying,
     }) {
     
-    //小説取得先のURL
-    //const [novelUrl, setNovelUrl] = useState('https://www.aozora.gr.jp/cards/000363/files/56656_74440.html');
-    const [novelUrl, setNovelUrl] = useState('');
     
     //小説取得の状況
     const [statusNovelUrl, setStatusNovelUrl] = useState("");
 
+    const [initFlag, setInitFlag] = useState(true);
+    const search = useLocation().search;
+    const query = new URLSearchParams(search);
+    const cardNum = query.get('cardNum');
+    const fileNum = query.get('fileNum');
+
+    //小説取得先のURL
+    const [novelUrl, setNovelUrl] = useState((cardNum === null || fileNum === null) ? '' : `https://www.aozora.gr.jp/cards/${cardNum}/files/${fileNum}.html`);
+    
     //小説情報の取得処理
     useEffect(() => {
+        if (initFlag) {
+            const conIndex = query.get('conIndex');
+            const curIndex = query.get('curIndex');
+            if (conIndex === null || curIndex === null) {
+                fetchNovel();
+            } else {
+                fetchNovel(conIndex, curIndex);
+            }
+            setInitFlag(false);
+        } else {
+            fetchNovel();
+        }
+        
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [novelUrl]);
+
+    const fetchNovel = (conIndex = 0, curIndex = 0) => {
         if (novelUrl === '') return;
         console.log("小説取得");
         setStatusNovelUrl('小説取得中')
+        setCurrentIndex(0);
         setContentIndex(0);
         fetch(`/novel?url=${novelUrl}`)
-          .then((res) => res.json())
-          .then((data) => setNovel({ ...novel,
+            .then((res) => res.json())
+            .then((data) => setNovel({ ...novel,
                 author: data.author,
                 title: data.title,
                 mainText: data.mainText,
-          }))
-          .then(() => setStatusNovelUrl(''));
-        setCurrentIndex(0);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [novelUrl]);
+        }))
+        .then(() => setStatusNovelUrl(''));
+        if (conIndex > 0) setContentIndex(conIndex);
+        if (curIndex > 0) setCurrentIndex(curIndex);
+    };
     
     //----------
     //検索キーワード
