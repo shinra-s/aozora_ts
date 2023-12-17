@@ -121,8 +121,10 @@ function ResultList ({
 
 export default function NovelChoicer ({
         novel,
+        novelUrl,
         setContentIndex,
         setNovel,
+        setNovelUrl,
         setCurrentIndex,
         isPlaying,
     }) {
@@ -134,21 +136,16 @@ export default function NovelChoicer ({
     const [initFlag, setInitFlag] = useState(true);
     const search = useLocation().search;
     const query = new URLSearchParams(search);
-    const cardNum = query.get('cardNum');
-    const fileNum = query.get('fileNum');
-
-    //小説取得先のURL
-    const [novelUrl, setNovelUrl] = useState((cardNum === null || fileNum === null) ? '' : `https://www.aozora.gr.jp/cards/${cardNum}/files/${fileNum}.html`);
-    
+   
     //小説情報の取得処理
     useEffect(() => {
         if (initFlag) {
-            const conIndex = query.get('conIndex');
-            const curIndex = query.get('curIndex');
-            if (conIndex === null || curIndex === null) {
+            const conIndex = query.has('conIndex') ? query.get('conIndex') : '';
+            const curIndex = query.has('curIndex') ? query.get('curIndex') : '';
+            if (conIndex === '' || curIndex === '') {
                 fetchNovel();
             } else {
-                fetchNovel(conIndex, curIndex);
+                fetchNovel(parseInt(conIndex), parseInt(curIndex));
             }
             setInitFlag(false);
         } else {

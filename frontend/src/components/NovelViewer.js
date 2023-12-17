@@ -6,6 +6,7 @@ import ChapterViewer from './ChapterViewer';
 export default function NovelViewer ({
     isPlaying,
     novel,
+    novelUrl,
     contentIndex,
     currentIndex,
     setIsPlaying,
@@ -67,6 +68,7 @@ export default function NovelViewer ({
         <div class="base">
             <NovelPlayer
                 novel={novel}
+                novelUrl={novelUrl}
                 contentIndex={contentIndex}
                 currentIndex={currentIndex}
                 isPlaying={isPlaying}

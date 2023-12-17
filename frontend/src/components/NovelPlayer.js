@@ -154,10 +154,100 @@ function WpmHandler ({
     );
 }
 
+//保存機能のUI
+function SaveHandler ({
+  novel,
+  novelUrl,
+  contentIndex,
+  currentIndex,
+}) {
+
+  const [saveState, setSaveState] = useState(null);
+
+  const updateSaveState = () => {
+    if (novelUrl === '') return;
+    const urlSplit = novelUrl.split('/');
+    const cardNum = urlSplit[4];
+    const fileNum = urlSplit[6].split('.')[0];
+    setSaveState({
+      cardNum: cardNum,
+      fileNum: fileNum,
+      conIndex: contentIndex,
+      curIndex: currentIndex,
+    });
+  };
+
+  return (
+    <div>
+      <button class="ui-button" onClick={() => updateSaveState()}>
+        しおりを挟む
+      </button>
+      <ViewSaveState 
+        saveState={saveState}
+        novel={novel}
+      />
+    </div>
+  )
+}
+
+//保存した栞の表示
+function ViewSaveState ({
+  saveState,
+  novel,
+}) {
+
+  const [shareUrl, setShareUrl] = useState('');
+
+  useEffect(() => {
+    if (saveState === null) return;
+    setShareUrl(`https://aozora-split.com?cardNum=${saveState.cardNum}&fileNum=${saveState.fileNum}&conIndex=${saveState.conIndex}&curIndex=${saveState.curIndex}`);
+  }, [saveState]);
+  
+  if (saveState === null) {
+    return (
+      <div>
+        まだしおりは挟んでません。
+      </div>
+    );
+  } else {
+    
+    const handleCopyToClipboard = () => {
+      navigator.clipboard.writeText(shareUrl)
+        .then(() => alert('URLをコピーしました'))
+        .catch(() => alert('URLのコピーに失敗しました'));
+    }
+
+    const handleXShare = () => {
+      const partName = novel.mainText[saveState.conIndex][0];
+      const postText = `「${novel.title}」の${partName === '本文' ? '途中' : partName}まで読みました`;
+
+      const xPostUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(postText)}`;
+    
+      window.open(xPostUrl, '_blank');
+    }
+
+    return (
+      <div>
+        タイトル：{novel.title}<br></br>
+        章：{novel.mainText[saveState.conIndex][0]}<br></br>
+        位置：{saveState.curIndex}<br></br>
+        次回アクセス：{shareUrl}<br></br>
+        <button class="ui-button" onClick={() => handleCopyToClipboard()}>
+          URLコピー
+        </button>
+        <button class="ui-button" onClick={() => handleXShare()}>
+          共有
+        </button>
+      </div>
+    );
+  }
+}
+
 //小説再生のプレーヤー
 export default function NovelPlayer ({
     isPlaying,
     novel,
+    novelUrl,
     contentIndex,
     currentIndex,
     setCurrentIndex,
@@ -237,6 +327,12 @@ export default function NovelPlayer ({
             <WpmHandler
                 isPlaying={isPlaying}
                 setWpm={setWpm}
+            />
+            <SaveHandler
+                novel={novel}
+                novelUrl={novelUrl}
+                contentIndex={contentIndex}
+                currentIndex={currentIndex}
             />
         </div>
     );
