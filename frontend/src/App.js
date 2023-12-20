@@ -19,6 +19,8 @@ function App() {
   });
   //現在の再生位置
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [tmpIntCIValue, setTmpIntCIValue] = useState(0);
+
   //再生中か否か
   const [isPlaying, setIsPlaying] = useState(false);
   //再生中の章
@@ -45,6 +47,7 @@ function App() {
         novelUrl={novelUrl}
         setCurrentIndex={setCurrentIndex}
         isPlaying={isPlaying}
+        setTmpIntCIValue={setTmpIntCIValue}
       />
       <hr color='#007bff'></hr>
       <h2>{novel.title}</h2>
@@ -57,6 +60,8 @@ function App() {
         setIsPlaying={setIsPlaying}
         setCurrentIndex={setCurrentIndex}
         setContentIndex={setContentIndex}
+        tmpIntCIValue={tmpIntCIValue}
+        setTmpIntCIValue={setTmpIntCIValue}
       />
     </div>
  );

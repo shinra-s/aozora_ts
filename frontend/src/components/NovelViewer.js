@@ -12,6 +12,8 @@ export default function NovelViewer ({
     setIsPlaying,
     setCurrentIndex,
     setContentIndex,
+    tmpIntCIValue,
+    setTmpIntCIValue,
 }) {
 
     //全文表示用の文字列
@@ -77,6 +79,8 @@ export default function NovelViewer ({
                 setContentIndex={setContentIndex}
                 setAllString={setAllString}
                 toAllString={toAllString}
+                tmpIntCIValue={tmpIntCIValue}
+                setTmpIntCIValue={setTmpIntCIValue}
             />
             <ChapterViewer
                 allString={allString}
@@ -85,6 +89,7 @@ export default function NovelViewer ({
                 contentIndex={contentIndex}
                 setCurrentIndex={setCurrentIndex}
                 setContentIndex={setContentIndex}
+                setTmpIntCIValue={setTmpIntCIValue}
             />
         </div>
     );

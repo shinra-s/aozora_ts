@@ -127,6 +127,7 @@ export default function NovelChoicer ({
         setNovelUrl,
         setCurrentIndex,
         isPlaying,
+        setTmpIntCIValue,
     }) {
     
     
@@ -145,6 +146,7 @@ export default function NovelChoicer ({
             if (conIndex === '' || curIndex === '') {
                 fetchNovel();
             } else {
+                console.log(curIndex);
                 fetchNovel(parseInt(conIndex), parseInt(curIndex));
             }
             setInitFlag(false);
@@ -160,6 +162,7 @@ export default function NovelChoicer ({
         console.log("小説取得");
         setStatusNovelUrl('小説取得中')
         setCurrentIndex(0);
+        setTmpIntCIValue(0);
         setContentIndex(0);
         fetch(`/novel?url=${novelUrl}`)
             .then((res) => res.json())
@@ -170,7 +173,10 @@ export default function NovelChoicer ({
         }))
         .then(() => setStatusNovelUrl(''));
         if (conIndex > 0) setContentIndex(conIndex);
-        if (curIndex > 0) setCurrentIndex(curIndex);
+        if (curIndex > 0) {
+            setCurrentIndex(curIndex);
+            setTmpIntCIValue(curIndex);
+        }
     };
     
     //----------

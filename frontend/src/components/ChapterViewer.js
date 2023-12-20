@@ -9,11 +9,13 @@ function ChapterList({
     contentIndex,
     setCurrentIndex,
     setContentIndex,
+    setTmpIntCIValue,
 }) {
     //次章へ行く際の処理
     const changeContentIndex = (index) => {
         if(!(isPlaying)) {
           setCurrentIndex(0);
+          setTmpIntCIValue(0);
           setContentIndex(index);
         }
     };
@@ -60,6 +62,7 @@ export default function ChapterViewer({
     setContentIndex,
     setCurrentIndex,
     allString,
+    setTmpIntCIValue,
 }) {
     return (
         <div class="contents_list">
@@ -70,6 +73,7 @@ export default function ChapterViewer({
                 contentIndex={contentIndex}
                 setCurrentIndex={setCurrentIndex}
                 setContentIndex={setContentIndex}
+                setTmpIntCIValue={setTmpIntCIValue}
             />
             <h3>＜再生中の本文＞</h3>
             <ChapterDetail

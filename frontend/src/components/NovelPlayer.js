@@ -10,7 +10,7 @@ function DisplayCard ({
 }) {
     return (
         <div class="card">
-            <p>{parse(novel?.mainText?.[contentIndex]?.[1]?.[currentIndex])}</p>
+            <p>{parse(novel?.mainText?.[contentIndex]?.[1]?.[currentIndex] ?? '')}</p>
           </div>
     );
 }
@@ -114,7 +114,7 @@ function WpmHandler ({
     isPlaying,
 }) {
     //入力中の再生速度
-    const [tmpWpm, setTmpWpm] = useState(150);
+    const [tmpWpm, setTmpWpm] = useState(100);
 
     //入力中の再生速度の更新処理
     useEffect(() => {
@@ -220,8 +220,9 @@ function ViewSaveState ({
     const handleXShare = () => {
       const partName = novel.mainText[saveState.conIndex][0];
       const postText = `「${novel.title}」の${partName === '本文' ? '途中' : partName}まで読みました`;
+      const hashtags = '青空文庫,青空文庫split';
 
-      const xPostUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(postText)}`;
+      const xPostUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(postText)}&hashtags=${encodeURIComponent(hashtags)}`;
     
       window.open(xPostUrl, '_blank');
     }
@@ -255,14 +256,16 @@ export default function NovelPlayer ({
     setIsPlaying,
     setAllString,
     toAllString,
+    tmpIntCIValue,
+    setTmpIntCIValue,
 }) {
     //再生速度
-    const [wpm, setWpm] = useState(150);
+    const [wpm, setWpm] = useState(100);
     //連続再生のフラグ
     const [isConPlay, setIsConPlay] = useState(false);
 
     //入力中の再生位置
-    const [tmpIntCIValue, setTmpIntCIValue] = useState(0);
+    // const [tmpIntCIValue, setTmpIntCIValue] = useState(0);
 
     const handleCurrentIndex = (int) => {
       setCurrentIndex(int);
