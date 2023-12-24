@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../App.css';
 import { ImNewTab } from 'react-icons/im';
 import { useLocation } from 'react-router-dom';
+import { Loading } from './Loading';
 
 // カタカナ判定
 const containKatakana = (str) => {
@@ -248,10 +249,11 @@ export default function NovelChoicer ({
                             checked={searchMode === 2}
                             onChange={(event) => handleSearchMode(event)}
                         />
-                        著者検索
+                        著者検索　
                     </label>
                     </div>
                     <p style={{height:'25px'}}><b> {statusNovelUrl}</b></p>
+                    <Loading statusNovelUrl={statusNovelUrl} />
                 </div>
                 <div class='contents_list_box'>
                     <ResultList 

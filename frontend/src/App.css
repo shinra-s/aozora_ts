@@ -181,6 +181,13 @@ ul li {
   height: 1em;
 }
 
+.spinner {
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 @media (max-width: 751px) {
   .search_ui {
     display: block;
@@ -212,6 +219,7 @@ ul li {
 @media (min-width: 752px) {
   .search_ui {
     display: flex;
+    align-items: center;
   }
 
   .ui-container {
