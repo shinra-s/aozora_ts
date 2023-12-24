@@ -145,40 +145,56 @@ function convertToBunsetsuArray(tokens) {
   let afterHtmlTag = false;
 
   // 形態素単位に処理して、文節の切れ目を判断して文節に成形する
-  tokens.forEach((token) => {
+  tokens.forEach((token,i) => {
+    //if (i > 80 && i < 120) console.log(token);
     const surface = token.surface_form;
     const { pos } = token;
     const posDetail = `${token.pos_detail_1}/${token.pos_detail_2}/${token.pos_detail_3}/${token.conjugated_type}`;
-    let noBreak = !(breakPos.includes(pos));
-    noBreak = noBreak || posDetail.includes('接尾');
-    noBreak = noBreak || ((pos === '動詞') && posDetail.includes('サ変接続'));
-    noBreak = noBreak || posDetail.includes('非自立');
-    noBreak = noBreak || afterPrepos;
-    noBreak = noBreak || (afterSahenNoun && (pos === '動詞') && posDetail.includes('サ変・スル'));
-    noBreak = noBreak || afterBracket;
-    noBreak = noBreak || htmlTagFlag;
-    noBreak = noBreak || afterHtmlTag;
 
-    if (!noBreak || (afterPeriod && !(surface.includes('」') || surface.includes('』')))
-        || surface.includes('『') || surface.includes('「')
-        || (!htmlTagFlag && surface.includes('<'))) {
+    // 区切らないところ
+    let noBreak = !(breakPos.includes(pos)); // 区切る品詞ではない
+    noBreak = noBreak || posDetail.includes('接尾'); // 接尾詞である
+    noBreak = noBreak || ((pos === '動詞') && posDetail.includes('サ変接続')); // サ変接続活用動詞である
+    noBreak = noBreak || posDetail.includes('非自立'); // 非自立詞である
+    noBreak = noBreak || afterPrepos; // 接頭詞の後である
+    noBreak = noBreak || (afterSahenNoun && (pos === '動詞') && posDetail.includes('サ変・スル')); // サ変接続の後のサ変スル動詞である
+    noBreak = noBreak || afterBracket; // かっこ開きの直後である
+    noBreak = noBreak || htmlTagFlag; // htmlタグの途中である
+    noBreak = noBreak || afterHtmlTag; // htmlタグ終了直後である
+
+    // 区切るところ
+    let breakPoint = (afterPeriod && !(surface.includes('」') || surface.includes('』'))); // 文末直後でかっこ閉じを含まない
+    breakPoint = breakPoint || surface.includes('『') || surface.includes('「'); // かっこ開きを含む
+    breakPoint = breakPoint || (!htmlTagFlag && surface.includes('<')); // htmlタグの途中でなく、<を含む
+
+    if (surface === '><' && resultArray[resultArray.length - 1].includes('/ruby')) {
+      resultArray[resultArray.length - 1] += '>';
       resultArray.push('');
+      resultArray[resultArray.length - 1] += '<';
+      htmlTagFlag = false;
+    } else {
+      if (!noBreak || breakPoint) {
+        resultArray.push('');
+      }
+      resultArray[resultArray.length - 1] += surface;
     }
-    resultArray[resultArray.length - 1] += surface;
-    afterPrepos = pos === '接頭詞';
-    afterSahenNoun = posDetail.includes('サ変接続');
-    afterBracket = surface.includes('（') || surface.includes('『') || surface.includes('「');
-    afterHtmlTag = surface.includes('>');
-    afterPeriod = surface.includes('。');
-    if (htmlTagFlag) {
-      if (resultArray[resultArray.length - 1].includes('ruby')) {
+
+    afterPrepos = pos === '接頭詞'; // 次は接頭詞の直後
+    afterSahenNoun = posDetail.includes('サ変接続'); // 次はサ変接続の直後
+    afterBracket = surface.includes('（') || surface.includes('『') || surface.includes('「'); //次はかっこ開きの直後
+    afterHtmlTag = surface.includes('>'); // 次は>の直後
+    afterPeriod = surface.includes('。'); // 次は文末直後
+
+    if (htmlTagFlag) { // htmlタグの途中
+      if (resultArray[resultArray.length - 1].includes('ruby')) { // rubyタグの途中
         htmlTagFlag = !(surface.includes('>') && resultArray[resultArray.length - 1].includes('/ruby'));
-      } else {
+      } else { // 他のhtmlタグ
         htmlTagFlag = !surface.includes('>');
       }
-    } else {
-      htmlTagFlag = surface.includes('<');
+    } else { // htmlタグの途中ではない
+      htmlTagFlag = surface.includes('<'); // htmlタグ開始
     }
+
   });
 
   for (let i = 0; ;) {
