@@ -442,6 +442,9 @@ app.get('/search', async (req, res) => {
     case '3':
       result = await searchByKeywords(db, 'books', keywords, 'fullname');
       break;
+    case '4':
+      result = await searchByKeywords(db, 'books', keywords, 'html_url');
+      break;
     default:
       console.log(`不正なモード:${mode},${keywords},${offset}`);
       return;

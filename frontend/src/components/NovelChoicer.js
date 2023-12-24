@@ -60,8 +60,48 @@ function ResultList ({
     setSearchResult,
     setIsBook,
     setLinks,
+    setInitFlag,
 }) {
+    const search = useLocation().search;
+    const query = new URLSearchParams(search);
+    const cardNum = query.has('cardNum') ? query.get('cardNum') : '';
+    const fileNum = query.has('fileNum') ? query.get('fileNum') : '';
+
+    const [saveUrl, setSaveUrl] = useState((cardNum === '' || fileNum === '') ? '' : `https://www.aozora.gr.jp/cards/${cardNum}/files/${fileNum}.html`);
+    const [saveJson, setSaveJson] = useState({result: []});
+
+    useEffect(() => {
+        if(saveUrl === '') return;
+        searchZorapi(4,saveUrl)
+            .then((data) => setSaveJson({ ...saveJson,
+                result: data.result,
+            }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [saveUrl]);
+
+    const restoreSaveNovel = () => {
+        setInitFlag(true);
+        handleNovelUrl(saveUrl);
+        setSaveUrl('');
+        setSaveJson({result: []});
+    };
+
     if (searchResult === null) {
+        if (saveJson?.result?.length > 0) {
+            const fullname = (containKatakana(saveJson.result[0].firstname) && containKatakana(saveJson.result[0].lastname)) ? `${saveJson.result[0].firstname} ${saveJson.result[0].lastname}` : `${saveJson.result[0].lastname} ${saveJson.result[0].firstname}`;
+            return (
+                <div>
+                    前回、読んだところから再開しますか？<br></br>
+                    タイトル：{saveJson.result[0].title}<br></br>
+                    著者：{fullname}<br></br>
+                    <button class='ui-button'
+                        disabled={isPlaying}
+                        onClick={() => restoreSaveNovel()}>
+                        再開
+                    </button>
+                </div>
+            );
+        }
         return (
             <p>読みたい小説を検索しましょう。</p>
         );
@@ -131,11 +171,10 @@ export default function NovelChoicer ({
         setTmpIntCIValue,
     }) {
     
-    
     //小説取得の状況
     const [statusNovelUrl, setStatusNovelUrl] = useState("");
 
-    const [initFlag, setInitFlag] = useState(true);
+    const [initFlag, setInitFlag] = useState(false);
     const search = useLocation().search;
     const query = new URLSearchParams(search);
    
@@ -154,18 +193,17 @@ export default function NovelChoicer ({
         } else {
             fetchNovel();
         }
-        
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [novelUrl]);
 
-    const fetchNovel = (conIndex = 0, curIndex = 0) => {
+    const fetchNovel = async (conIndex = 0, curIndex = 0) => {
         if (novelUrl === '') return;
         console.log("小説取得");
         setStatusNovelUrl('小説取得中')
         setCurrentIndex(0);
         setTmpIntCIValue(0);
         setContentIndex(0);
-        fetch(`/novel?url=${novelUrl}`)
+        await fetch(`/novel?url=${novelUrl}`)
             .then((res) => res.json())
             .then((data) => setNovel({ ...novel,
                 author: data.author,
@@ -264,6 +302,7 @@ export default function NovelChoicer ({
                         setIsBook={setIsBook}
                         setSearchResult={setSearchResult}
                         setLinks={setLinks}
+                        setInitFlag={setInitFlag}
                     />
                 </div>
                 <div style={{display:'flex'}}>

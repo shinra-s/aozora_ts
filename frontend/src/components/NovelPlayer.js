@@ -8,9 +8,17 @@ function DisplayCard ({
     contentIndex,
     currentIndex,
 }) {
+    const parseBunsetsu = (str) => {
+      try {
+        return parse(str);
+      } catch (e) {
+        return str;
+      }
+    }
+
     return (
         <div class="card">
-            <p>{parse(novel?.mainText?.[contentIndex]?.[1]?.[currentIndex] ?? '')}</p>
+            <p>{parseBunsetsu(novel?.mainText?.[contentIndex]?.[1]?.[currentIndex] ?? '')}</p>
           </div>
     );
 }

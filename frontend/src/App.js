@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import './App.css';
 
 // 小説選択、取得UI
@@ -26,13 +25,8 @@ function App() {
   //再生中の章
   const [contentIndex, setContentIndex] = useState(0);
 
-  const search = useLocation().search;
-  const query = new URLSearchParams(search);
-  const cardNum = query.has('cardNum') ? query.get('cardNum') : '';
-  const fileNum = query.has('fileNum') ? query.get('fileNum') : '';
-
   //小説取得先のURL
-  const [novelUrl, setNovelUrl] = useState((cardNum === '' || fileNum === '') ? '' : `https://www.aozora.gr.jp/cards/${cardNum}/files/${fileNum}.html`);
+  const [novelUrl, setNovelUrl] = useState('');
 
   return (
     <div>
