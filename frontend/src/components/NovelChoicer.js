@@ -86,6 +86,9 @@ function ResultList ({
         setSaveJson({result: []});
     };
 
+    // 正規表現パターン
+    const regexPattern = /^https:\/\/www\.aozora\.gr\.jp\/cards\/\d+\/files\/\d+_\d+\.html$/;
+
     if (searchResult === null) {
         if (saveJson?.result?.length > 0) {
             const fullname = (containKatakana(saveJson.result[0].firstname) && containKatakana(saveJson.result[0].lastname)) ? `${saveJson.result[0].firstname} ${saveJson.result[0].lastname}` : `${saveJson.result[0].lastname} ${saveJson.result[0].firstname}`;
@@ -120,9 +123,9 @@ function ResultList ({
                         <h5>{fullname}</h5>
                         <a href={book.card_url} target="_blank" rel="noopener noreferrer">詳細<ImNewTab/></a> 
                         <button class='read-button'
-                        disabled={isPlaying}
+                        disabled={isPlaying || !regexPattern.test(book.html_url)}
                         onClick={() => handleNovelUrl(book.html_url)}>
-                        読む
+                        {regexPattern.test(book.html_url) ? '読む' : '非対応'}
                         </button>
                     </p>
                 </li>
@@ -196,8 +199,12 @@ export default function NovelChoicer ({
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [novelUrl]);
 
+    // 正規表現パターン
+    const regexPattern = /^https:\/\/www\.aozora\.gr\.jp\/cards\/\d+\/files\/\d+_\d+\.html$/;
+
     const fetchNovel = async (conIndex = 0, curIndex = 0) => {
         if (novelUrl === '') return;
+        if (!regexPattern.test(novelUrl)) return;
         console.log("小説取得");
         setStatusNovelUrl('小説取得中')
         setCurrentIndex(0);

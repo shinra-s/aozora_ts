@@ -12,7 +12,7 @@ function App() {
     //著者
     author: '',
     //題名
-    title: '読みたい小説を選んだください',
+    title: '読みたい小説を選んでください',
     //本文（章単位で章題と文節で区切った本文のペア）
     mainText: [['本文',['小説選択前']]],
   });
@@ -31,7 +31,8 @@ function App() {
   return (
     <div>
       <h1>青空文庫.split</h1>
-      青空文庫は<a href="https://www.aozora.gr.jp/index.html">こちら</a>。募金も<a href="https://honnomirai.net/">どうぞ</a>。
+      青空文庫は<a href="https://www.aozora.gr.jp/index.html">こちら</a>。募金も<a href="https://honnomirai.net/">どうぞ</a>。<br></br>
+      不具合などは<a href="https://docs.google.com/forms/d/e/1FAIpQLSeSTa4bhIKoLixDe17bOyM_I6cj6uUzKasFalrb8-U72eWc8Q/viewform">こちらに</a>。
       <hr color='#007bff'></hr>
       <NovelChoicer
         setContentIndex={setContentIndex}
