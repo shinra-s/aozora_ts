@@ -1,6 +1,7 @@
 import React from 'react';
 import parse from 'html-react-parser';
-import { Box, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
+import { List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
+import { DefaultBox, HalfBox, PaperBox } from './MyBox';
 
 //章のリスト
 function ChapterList({
@@ -21,15 +22,7 @@ function ChapterList({
     };
 
     return (
-        <Box sx={{
-            bgcolor: 'background.paper',
-            boxShadow: 1,
-            borderRadius: 2,
-            p: 2,
-            height: 200,
-            overflow: 'hidden',
-            overflowY: 'scroll',
-        }}>
+        <PaperBox>
             <List>
             {novel.mainText.map((item, index) => (
                 <ListItem disablePadding>
@@ -42,7 +35,7 @@ function ChapterList({
                 </ListItem>
             ))}
             </List>
-        </Box>
+        </PaperBox>
     );
 }
 
@@ -52,19 +45,13 @@ function ChapterDetail({
 }) {
     // console.log(allString.slice(0,5));
     return (
-        <Box sx={{
-            bgcolor: 'background.paper',
-            boxShadow: 1,
-            borderRadius: 2,
-            p: 2,
-            height: 200,
-            overflow: 'hidden',
-            overflowY: 'scroll',
-        }}>
-            <Typography variant='body1'>
-                {parse(allString)}
-            </Typography>
-        </Box>
+        <PaperBox>
+            <DefaultBox>
+                <Typography variant='body1'>
+                    {parse(allString)}
+                </Typography>
+            </DefaultBox>
+        </PaperBox>
     );
 }
 
@@ -79,7 +66,7 @@ export default function ChapterViewer({
     setTmpIntCIValue,
 }) {
     return (
-        <Box>
+        <HalfBox>
             <Typography variant='h6'>＜目次＞</Typography>
             <ChapterList
                 isPlaying={isPlaying}
@@ -89,10 +76,12 @@ export default function ChapterViewer({
                 setContentIndex={setContentIndex}
                 setTmpIntCIValue={setTmpIntCIValue}
             />
-            <Typography variant='h6'>＜再生中の本文＞</Typography>
+            <DefaultBox>
+                <Typography variant='h6'>＜再生中の本文＞</Typography>
+            </DefaultBox>
             <ChapterDetail
                 allString={allString}
             />
-        </Box>
+        </HalfBox>
     );
 }

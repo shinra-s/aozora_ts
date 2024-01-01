@@ -3,6 +3,7 @@ import { ImNewTab } from 'react-icons/im';
 import { useLocation } from 'react-router-dom';
 import { Loading } from './Loading';
 import { Box, Button, FormControlLabel, List, ListItem, Radio, TextField, Typography, Link } from '@mui/material';
+import { DefaultBox, FlexBox, ListItemBox, PaperBox } from './MyBox';
 
 // カタカナ判定
 const containKatakana = (str) => {
@@ -31,20 +32,42 @@ function PagingButton ({
         setIsBook(json.isBook);
         setLinks(json.links);
     };
-    const word = isNext ? '次へ' : '前へ';
-
+    
     if (target === null) {
         return (
         <Box sx={{height:'50px', width:'50%'}}></Box>
         );
-    } else {
+    } else if (isNext) {
         return (
-            <Box sx={{height:'50px', width:'50%'}}
-                alignItems={isNext ? 'right': 'left'}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    height:'50px',
+                    width:'50%',
+                    flexDirection: 'row-reverse',
+                }}
+            >
                 <Button variant='contained'
                         disabled={isPlaying}
                         onClick={() => handlePage()}>
-                        <Typography variant='button'>{word}</Typography>
+                        <Typography variant='button'>次へ</Typography>
+                </Button>
+            </Box>
+            );
+    } else {
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    height:'50px',
+                    width:'50%',
+                    flexDirection: 'row',
+                }}
+            >
+                <Button variant='contained'
+                        disabled={isPlaying}
+                        onClick={() => handlePage()}>
+                        <Typography variant='button'>前へ</Typography>
                 </Button>
             </Box>
             );
@@ -93,7 +116,7 @@ function ResultList ({
         if (saveJson?.result?.length > 0) {
             const fullname = (containKatakana(saveJson.result[0].firstname) && containKatakana(saveJson.result[0].lastname)) ? `${saveJson.result[0].firstname} ${saveJson.result[0].lastname}` : `${saveJson.result[0].lastname} ${saveJson.result[0].firstname}`;
             return (
-                <Box>
+                <DefaultBox>
                     <Typography variant='body1'>
                         前回、読んだところから再開しますか？<br></br>
                         タイトル：{saveJson.result[0].title}<br></br>
@@ -104,36 +127,36 @@ function ResultList ({
                         onClick={() => restoreSaveNovel()}>
                         <Typography variant='button'>再開</Typography>
                     </Button>
-                </Box>
+                </DefaultBox>
             );
         }
         return (
-            <Box>
+            <DefaultBox>
                 <Typography variant='subtitle1'>読みたい小説を検索しましょう。</Typography>
-            </Box>
+            </DefaultBox>
         );
     } else if (searchResult.length === 0 ) {
         return (
-            <Box>
+            <DefaultBox>
                 <Typography variant='subtitle1'>キーワードに当てはまるものが見つかりません。</Typography>
-            </Box>
+            </DefaultBox>
         );
     } else if(isBook) {
         const list = searchResult.map((book) => {
             const fullname = (containKatakana(book.firstname) && containKatakana(book.lastname)) ? `${book.firstname} ${book.lastname}` : `${book.lastname} ${book.firstname}`;
             // console.log(book.html_url);
             return (
-                <ListItem sx={{flexBasis:'50%'}}>
-                    <Box>
-                        <Typography variant='h6'>{book.title}</Typography>
-                        <Typography variant='subtitle1'>{fullname}</Typography>
+                <ListItem disablePadding sx={{flexBasis:'50%', maxWidth: '50%'}}>
+                    <ListItemBox>
+                        <Typography noWrap variant='h6'>{book.title}</Typography>
+                        <Typography noWrap variant='subtitle1'>{fullname}</Typography>
                         <Link href={book.card_url} target="_blank" rel="noopener noreferrer">詳細<ImNewTab/></Link> 
                         <Button variant='contained'
                             disabled={isPlaying || !regexPattern.test(book.html_url)}
                             onClick={() => handleNovelUrl(book.html_url)}>
                             <Typography variant='button'>{regexPattern.test(book.html_url) ? '読む' : '非対応'}</Typography>
                         </Button>
-                    </Box>
+                    </ListItemBox>
                 </ListItem>
             );
         });
@@ -151,21 +174,21 @@ function ResultList ({
             const fullname = kanaFlag ? `${person.firstname} ${person.lastname}` : `${person.lastname} ${person.firstname}`;
             const fullname_yomi = kanaFlag ? `${person.firstname_yomi} ${person.lastname_yomi}` : `${person.lastname_yomi} ${person.firstname_yomi}`;
             return (
-                <ListItem sx={{flexBasis:'50%'}}>
-                    <Box>
-                        <Typography>{fullname}</Typography>
-                        <Typography>{fullname_yomi}</Typography>
+                <ListItem disablePadding sx={{flexBasis:'50%'}}>
+                    <ListItemBox>
+                        <Typography noWrap variant='h6'>{fullname}</Typography>
+                        <Typography noWrap variant='subtitle1'>{fullname_yomi}</Typography>
                         <Button variant='contained'
                             disabled={isPlaying}
                             onClick={() => handleSearch(index)}>
                             著作検索
                         </Button>
-                    </Box>
+                    </ListItemBox>
                 </ListItem>
             );
         });
 
-        return (<List sx={{display:'flex', flexWrap:'wrap'}}>{list}</List>);
+        return (<List disablePadding sx={{display:'flex', flexWrap:'wrap'}}>{list}</List>);
     }
 }
 
@@ -268,7 +291,7 @@ export default function NovelSelector ({
 
     return (
         <Box>
-            <Box sx={{display: 'flex',}}>
+            <FlexBox>
                 <TextField
                     type='text'
                     value={keyword}
@@ -302,16 +325,8 @@ export default function NovelSelector ({
                 />
                 <Box sx={{height:'25px'}}><Typography variant='subtitle1'> {statusNovelUrl}</Typography></Box>
                 <Loading statusNovelUrl={statusNovelUrl} />
-            </Box>
-            <Box sx={{
-                bgcolor: 'background.paper',
-                boxShadow: 1,
-                borderRadius: 2,
-                p: 2,
-                height: 200,
-                overflow: 'hidden',
-                overflowY: 'scroll',
-            }}>
+            </FlexBox>
+            <PaperBox>
                 <ResultList 
                     searchResult={searchResult}
                     handleNovelUrl={handleNovelUrl}
@@ -322,8 +337,8 @@ export default function NovelSelector ({
                     setLinks={setLinks}
                     setInitFlag={setInitFlag}
                 />
-            </Box>
-            <Box sx={{display:'flex'}}>
+            </PaperBox>
+            <FlexBox>
                 <PagingButton
                     isNext={false}
                     target={links.prev}
@@ -340,7 +355,7 @@ export default function NovelSelector ({
                     setSearchResult={setSearchResult}
                     setLinks={setLinks}
                 />
-            </Box>
+            </FlexBox>
         </Box>
     );
 }

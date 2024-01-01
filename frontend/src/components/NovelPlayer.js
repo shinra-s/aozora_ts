@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import parse from 'html-react-parser';
-import { Box, Button, Card, CardContent, Checkbox, FormControlLabel, Slider, TextField, Typography } from '@mui/material';
+import { Button, Card, CardContent, Checkbox, FormControlLabel, Slider, TextField, Typography } from '@mui/material';
+import { DefaultBox, FlexBox, HalfBox } from './MyBox';
 
 //再生文字列表示カード
 function DisplayCard ({
@@ -17,15 +18,16 @@ function DisplayCard ({
     }
 
     return (
-        //<div class="card">
-        <Card sx={{
-          minHeight: 70,
-          textAlign: 'center',
-        }}>
-            <CardContent>
-              <Typography variant='subtitle1'>{parseBunsetsu(novel?.mainText?.[contentIndex]?.[1]?.[currentIndex] ?? '')}</Typography>
-            </CardContent>
-        </Card>
+        <DefaultBox>
+          <Card sx={{
+            minHeight: 70,
+            textAlign: 'center',
+          }}>
+              <CardContent>
+                <Typography variant='subtitle1'>{parseBunsetsu(novel?.mainText?.[contentIndex]?.[1]?.[currentIndex] ?? '')}</Typography>
+              </CardContent>
+          </Card>
+        </DefaultBox>
     );
 }
 
@@ -37,11 +39,7 @@ function PlayHandler ({
     setIsConPlay,
 }) {
     return (
-        <Box
-          sx={{
-            display: 'flex',
-          }}
-        >
+        <FlexBox>
             <Button variant='contained' onClick={() => setIsPlaying(prevIsPlaying => !prevIsPlaying)}>
               <Typography variant='button'>{isPlaying ? '停止' : '再生'}</Typography>
             </Button>
@@ -55,7 +53,7 @@ function PlayHandler ({
                 />
               }
             />
-        </Box>
+        </FlexBox>
     );
 }
 
@@ -101,11 +99,7 @@ function SeekHandler ({
     };
 
     return (
-        <Box
-          sx={{
-            display: 'flex',
-          }}
-        >
+        <FlexBox>
             <Typography variant='body1'>再生位置：</Typography>
             <Slider
               value={tmpIntCIValue}
@@ -121,7 +115,7 @@ function SeekHandler ({
               disabled={isPlaying}
             />
             <Typography variant='body1'>（0 〜 {novel.mainText[contentIndex][1].length - 1}）</Typography>
-        </Box>
+        </FlexBox>
     );
 }
 
@@ -157,11 +151,7 @@ function WpmHandler ({
     };
 
     return (
-        <Box
-          sx={{
-            display: 'flex',
-          }}
-        >
+        <FlexBox>
             <Typography variant='body1'>表示速度：</Typography>
             <TextField
               type='number'
@@ -170,7 +160,7 @@ function WpmHandler ({
               disabled={isPlaying}
             />
             <Typography variant='body1'>単語/分（60〜600）</Typography>
-        </Box>
+        </FlexBox>
     );
 }
 
@@ -198,7 +188,7 @@ function SaveHandler ({
   };
 
   return (
-    <Box>
+    <DefaultBox>
       <Button variant='contained' onClick={() => updateSaveState()}>
         <Typography variant='button'>しおりを挟む</Typography>
       </Button>
@@ -206,7 +196,7 @@ function SaveHandler ({
         saveState={saveState}
         novel={novel}
       />
-    </Box>
+    </DefaultBox>
   )
 }
 
@@ -225,9 +215,9 @@ function ViewSaveState ({
   
   if (saveState === null) {
     return (
-      <Box>
+      <DefaultBox>
         <Typography variant='body1'>まだしおりは挟んでません。</Typography>
-      </Box>
+      </DefaultBox>
     );
   } else {
     
@@ -248,7 +238,7 @@ function ViewSaveState ({
     }
 
     return (
-      <Box>
+      <DefaultBox>
         <Typography variant='body1'>
           タイトル：{novel.title}<br></br>
           章：{novel.mainText[saveState.conIndex][0]}<br></br>
@@ -261,7 +251,7 @@ function ViewSaveState ({
         <Button variant='contained' onClick={() => handleXShare()}>
           <Typography variant='button'>共有</Typography>
         </Button>
-      </Box>
+      </DefaultBox>
     );
   }
 }
@@ -326,7 +316,7 @@ export default function NovelPlayer ({
     }, [isPlaying]);
 
     return (
-        <Box>
+        <HalfBox>
             <Typography variant='h6'>著者：{novel.author}</Typography>
             <DisplayCard
                 novel={novel}
@@ -359,6 +349,6 @@ export default function NovelPlayer ({
                 contentIndex={contentIndex}
                 currentIndex={currentIndex}
             />
-        </Box>
+        </HalfBox>
     );
 }

@@ -4,9 +4,10 @@ import React, { useState } from 'react';
 import NovelSelector from './components/NovelSelector';
 // 小説閲覧UI
 import NovelViewer from './components/NovelViewer';
-import { Box, Divider, Typography, Link, createTheme, responsiveFontSizes } from '@mui/material';
-import { grey } from '@mui/material/colors';
+import { Box, Divider, Typography, Link, createTheme, responsiveFontSizes, CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
+import { grey } from '@mui/material/colors';
+import { DefaultBox } from './components/MyBox';
 
 function App() {
   //小説情報
@@ -32,7 +33,9 @@ function App() {
 
   let theme = createTheme({
       palette: {
-        background: grey,
+        background: {
+          default: grey[200],
+        },
       },
       typography: {
         h4: {
@@ -53,13 +56,20 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box>
+      <CssBaseline />
+      <Box sx={{
+        bgcolor: 'background.default',
+        pt: 2,
+        px: '5%',
+      }}>
         <Typography variant='h4'>青空文庫.split</Typography>
-        <Typography variant='body1'>
-          青空文庫上の小説を短く区切って、順番に表示することで視線を動かさずに読書ができます。<br></br>
-          青空文庫は<Link href="https://www.aozora.gr.jp/index.html">こちら</Link>。募金も<Link href="https://honnomirai.net/">どうぞ</Link>。<br></br>
-          不具合などは<Link href="https://docs.google.com/forms/d/e/1FAIpQLSeSTa4bhIKoLixDe17bOyM_I6cj6uUzKasFalrb8-U72eWc8Q/viewform">こちらに</Link>。
-        </Typography>
+        <DefaultBox>
+          <Typography variant='body1'>
+            青空文庫上の小説を短く区切って、順番に表示することで視線を動かさずに読書ができます。<br></br>
+            青空文庫は<Link href="https://www.aozora.gr.jp/index.html">こちら</Link>。募金も<Link href="https://honnomirai.net/">どうぞ</Link>。<br></br>
+            不具合などは<Link href="https://docs.google.com/forms/d/e/1FAIpQLSeSTa4bhIKoLixDe17bOyM_I6cj6uUzKasFalrb8-U72eWc8Q/viewform">こちらに</Link>。
+          </Typography>
+        </DefaultBox>
         <Divider variant='middle' />
         <NovelSelector
           setContentIndex={setContentIndex}
@@ -72,7 +82,9 @@ function App() {
           setTmpIntCIValue={setTmpIntCIValue}
         />
         <Divider variant='middle' />
-        <Typography variant='h5'>{novel.title}</Typography>
+        <DefaultBox>
+          <Typography variant='h5'>{novel.title}</Typography>
+        </DefaultBox>
         <NovelViewer
           novel={novel}
           novelUrl={novelUrl}
