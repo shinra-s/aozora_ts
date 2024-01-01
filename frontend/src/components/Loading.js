@@ -1,16 +1,14 @@
 import React  from "react";
 import { PulseLoader } from "react-spinners";
-import '../App.css';
+import { Box } from "@mui/material";
 
 export const Loading = ({
     statusNovelUrl,
-    inverted = true,
-    content = 'Loading...'
 }) => {
-    if (statusNovelUrl !== '小説取得中') return (<div></div>);
+    if (statusNovelUrl !== '小説取得中') return (<Box></Box>);
     return (
-        <div class="spinner">
+        <Box>
             <PulseLoader color="#36d7b7" />
-        </div>
+        </Box>
     );
 };

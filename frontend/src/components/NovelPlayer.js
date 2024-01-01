@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import parse from 'html-react-parser';
-import '../App.css';
+import { Box, Button, Card, CardContent, Checkbox, FormControlLabel, Slider, TextField, Typography } from '@mui/material';
 
 //再生文字列表示カード
 function DisplayCard ({
@@ -17,9 +17,15 @@ function DisplayCard ({
     }
 
     return (
-        <div class="card">
-            <p>{parseBunsetsu(novel?.mainText?.[contentIndex]?.[1]?.[currentIndex] ?? '')}</p>
-          </div>
+        //<div class="card">
+        <Card sx={{
+          minHeight: 70,
+          textAlign: 'center',
+        }}>
+            <CardContent>
+              <Typography variant='subtitle1'>{parseBunsetsu(novel?.mainText?.[contentIndex]?.[1]?.[currentIndex] ?? '')}</Typography>
+            </CardContent>
+        </Card>
     );
 }
 
@@ -31,23 +37,25 @@ function PlayHandler ({
     setIsConPlay,
 }) {
     return (
-        <div class="ui-container">
-            <button class="ui-button" onClick={() => setIsPlaying(prevIsPlaying => !prevIsPlaying)}>
-              {isPlaying ? '停止' : '再生'}
-            </button>
-            <div display='flex'>
-            <label htmlFor="check">
-            連続再生（章終わりで停止しない）：
-            </label>
-            <input
-              type="checkbox"
-              id="check"
-              checked={isConPlay}
-              onChange={() => setIsConPlay(prevState => !prevState)}
-              disabled={isPlaying}
+        <Box
+          sx={{
+            display: 'flex',
+          }}
+        >
+            <Button variant='contained' onClick={() => setIsPlaying(prevIsPlaying => !prevIsPlaying)}>
+              <Typography variant='button'>{isPlaying ? '停止' : '再生'}</Typography>
+            </Button>
+            <FormControlLabel
+              label='連続再生（章終わりで停止しない）'
+              control={
+                <Checkbox
+                  checked={isConPlay}
+                  onChange={() => setIsConPlay(prevState => !prevState)}
+                  disabled={isPlaying}
+                />
+              }
             />
-            </div>
-        </div>
+        </Box>
     );
 }
 
@@ -93,26 +101,27 @@ function SeekHandler ({
     };
 
     return (
-        <div class="ui-container">
-            再生位置：
-            <input
-              type="range"
+        <Box
+          sx={{
+            display: 'flex',
+          }}
+        >
+            <Typography variant='body1'>再生位置：</Typography>
+            <Slider
+              value={tmpIntCIValue}
               min={0}
               max={novel.mainText[contentIndex][1]?.length - 1}
+              disabled={isPlaying}
+              onChange={handleTmpCIChange}
+            />
+            <TextField
+              type='number'
               value={tmpIntCIValue}
-              onChange={(event) => handleTmpCIChange(event)}
-              class="seek-bar-slider"
+              onChange={handleTmpCIChange}
               disabled={isPlaying}
             />
-            <input
-              type="number"
-              class="seek-bar-textbox"
-              value={tmpIntCIValue}
-              onChange={(event) => handleTmpCIChange(event)}
-              disabled={isPlaying}
-            />
-            （0 〜 {novel.mainText[contentIndex][1].length - 1}）
-        </div>
+            <Typography variant='body1'>（0 〜 {novel.mainText[contentIndex][1].length - 1}）</Typography>
+        </Box>
     );
 }
 
@@ -148,17 +157,20 @@ function WpmHandler ({
     };
 
     return (
-        <div class="ui-container">
-            表示速度：
-            <input
-              type="number"
-              class="seek-bar-textbox"
+        <Box
+          sx={{
+            display: 'flex',
+          }}
+        >
+            <Typography variant='body1'>表示速度：</Typography>
+            <TextField
+              type='number'
               value={tmpWpm}
-              onChange={(event) => handleTmpWpmChange(event)}
+              onChange={handleTmpWpmChange}
               disabled={isPlaying}
             />
-            単語/分（60〜600）
-        </div>
+            <Typography variant='body1'>単語/分（60〜600）</Typography>
+        </Box>
     );
 }
 
@@ -186,15 +198,15 @@ function SaveHandler ({
   };
 
   return (
-    <div>
-      <button class="ui-button" onClick={() => updateSaveState()}>
-        しおりを挟む
-      </button>
+    <Box>
+      <Button variant='contained' onClick={() => updateSaveState()}>
+        <Typography variant='button'>しおりを挟む</Typography>
+      </Button>
       <ViewSaveState 
         saveState={saveState}
         novel={novel}
       />
-    </div>
+    </Box>
   )
 }
 
@@ -213,9 +225,9 @@ function ViewSaveState ({
   
   if (saveState === null) {
     return (
-      <div>
-        まだしおりは挟んでません。
-      </div>
+      <Box>
+        <Typography variant='body1'>まだしおりは挟んでません。</Typography>
+      </Box>
     );
   } else {
     
@@ -236,18 +248,20 @@ function ViewSaveState ({
     }
 
     return (
-      <div>
-        タイトル：{novel.title}<br></br>
-        章：{novel.mainText[saveState.conIndex][0]}<br></br>
-        位置：{saveState.curIndex}<br></br>
-        次回アクセス：{shareUrl}<br></br>
-        <button class="ui-button" onClick={() => handleCopyToClipboard()}>
-          URLコピー
-        </button>
-        <button class="ui-button" onClick={() => handleXShare()}>
-          共有
-        </button>
-      </div>
+      <Box>
+        <Typography variant='body1'>
+          タイトル：{novel.title}<br></br>
+          章：{novel.mainText[saveState.conIndex][0]}<br></br>
+          位置：{saveState.curIndex}<br></br>
+          次回アクセス：{shareUrl}<br></br>
+        </Typography>
+        <Button variant='contained' onClick={() => handleCopyToClipboard()}>
+          <Typography variant='button'>URLコピー</Typography>
+        </Button>
+        <Button variant='contained' onClick={() => handleXShare()}>
+          <Typography variant='button'>共有</Typography>
+        </Button>
+      </Box>
     );
   }
 }
@@ -312,8 +326,8 @@ export default function NovelPlayer ({
     }, [isPlaying]);
 
     return (
-        <div class="contents_list">
-            <h3>著者：{novel.author}</h3>
+        <Box>
+            <Typography variant='h6'>著者：{novel.author}</Typography>
             <DisplayCard
                 novel={novel}
                 contentIndex={contentIndex}
@@ -345,6 +359,6 @@ export default function NovelPlayer ({
                 contentIndex={contentIndex}
                 currentIndex={currentIndex}
             />
-        </div>
+        </Box>
     );
 }

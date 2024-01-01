@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import '../App.css';
 import NovelPlayer from './NovelPlayer';
 import ChapterViewer from './ChapterViewer';
+import { Box } from '@mui/material';
 
 export default function NovelViewer ({
     isPlaying,
@@ -67,7 +67,11 @@ export default function NovelViewer ({
     };    
 
     return (
-        <div class="base">
+        <Box
+          sx={{
+            display: 'flex'
+          }}
+        >
             <NovelPlayer
                 novel={novel}
                 novelUrl={novelUrl}
@@ -91,6 +95,6 @@ export default function NovelViewer ({
                 setContentIndex={setContentIndex}
                 setTmpIntCIValue={setTmpIntCIValue}
             />
-        </div>
+        </Box>
     );
 }

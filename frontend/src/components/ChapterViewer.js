@@ -1,6 +1,6 @@
 import React from 'react';
 import parse from 'html-react-parser';
-import '../App.css';
+import { Box, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
 
 //章のリスト
 function ChapterList({
@@ -21,22 +21,28 @@ function ChapterList({
     };
 
     return (
-        <div class="contents_list_box">
-            <ul>
-              {novel.mainText.map((item, index) => (
-                <li
-                  onClick={() => changeContentIndex(index)}
-                  key={index}
-                  style={index === contentIndex
-                  ? {color: '#404040', 'border-left': 'solid 6px #007bff'}
-                  : {color: 'gray', 'border-left': 'solid 6px gray'}
-                  }
-                >
-                  {item[0]}
-                </li>
-              ))}
-            </ul>
-        </div>
+        <Box sx={{
+            bgcolor: 'background.paper',
+            boxShadow: 1,
+            borderRadius: 2,
+            p: 2,
+            height: 200,
+            overflow: 'hidden',
+            overflowY: 'scroll',
+        }}>
+            <List>
+            {novel.mainText.map((item, index) => (
+                <ListItem disablePadding>
+                    <ListItemButton
+                        selected={index === contentIndex}
+                        onClick={() => changeContentIndex(index)}
+                    >
+                        <ListItemText primary={item[0]} />
+                    </ListItemButton>
+                </ListItem>
+            ))}
+            </List>
+        </Box>
     );
 }
 
@@ -46,11 +52,19 @@ function ChapterDetail({
 }) {
     // console.log(allString.slice(0,5));
     return (
-        <div class="contents_list_box">
-            <p class='all_text'>
-              {parse(allString)}
-            </p>
-        </div>
+        <Box sx={{
+            bgcolor: 'background.paper',
+            boxShadow: 1,
+            borderRadius: 2,
+            p: 2,
+            height: 200,
+            overflow: 'hidden',
+            overflowY: 'scroll',
+        }}>
+            <Typography variant='body1'>
+                {parse(allString)}
+            </Typography>
+        </Box>
     );
 }
 
@@ -65,8 +79,8 @@ export default function ChapterViewer({
     setTmpIntCIValue,
 }) {
     return (
-        <div class="contents_list">
-            <h3>＜目次＞</h3>
+        <Box>
+            <Typography variant='h6'>＜目次＞</Typography>
             <ChapterList
                 isPlaying={isPlaying}
                 novel={novel}
@@ -75,10 +89,10 @@ export default function ChapterViewer({
                 setContentIndex={setContentIndex}
                 setTmpIntCIValue={setTmpIntCIValue}
             />
-            <h3>＜再生中の本文＞</h3>
+            <Typography variant='h6'>＜再生中の本文＞</Typography>
             <ChapterDetail
                 allString={allString}
             />
-        </div>
+        </Box>
     );
 }

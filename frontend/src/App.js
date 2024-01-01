@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import './App.css';
 
 // 小説選択、取得UI
-import NovelChoicer from './components/NovelChoicer';
+import NovelSelector from './components/NovelSelector';
 // 小説閲覧UI
 import NovelViewer from './components/NovelViewer';
+import { Box, Divider, Typography, Link, createTheme, responsiveFontSizes } from '@mui/material';
+import { grey } from '@mui/material/colors';
+import { ThemeProvider } from '@emotion/react';
 
 function App() {
   //小説情報
@@ -28,38 +30,63 @@ function App() {
   //小説取得先のURL
   const [novelUrl, setNovelUrl] = useState('');
 
+  let theme = createTheme({
+      palette: {
+        background: grey,
+      },
+      typography: {
+        h4: {
+          fontWeight: 'bold',
+        },
+        h5: {
+          fontWeight: 'bold',
+        },
+        h6: {
+          fontWeight: 'bold',
+        },
+        subtitle1: {
+          fontWeight: 'bold',
+        },
+      },
+  });
+  theme = responsiveFontSizes(theme);
+
   return (
-    <div>
-      <h1>青空文庫.split</h1>
-      青空文庫上の小説を短く区切って、順番に表示することで視線を動かさずに読書ができます。<br></br>
-      青空文庫は<a href="https://www.aozora.gr.jp/index.html">こちら</a>。募金も<a href="https://honnomirai.net/">どうぞ</a>。<br></br>
-      不具合などは<a href="https://docs.google.com/forms/d/e/1FAIpQLSeSTa4bhIKoLixDe17bOyM_I6cj6uUzKasFalrb8-U72eWc8Q/viewform">こちらに</a>。
-      <hr color='#007bff'></hr>
-      <NovelChoicer
-        setContentIndex={setContentIndex}
-        setNovel={setNovel}
-        setNovelUrl={setNovelUrl}
-        novel={novel}
-        novelUrl={novelUrl}
-        setCurrentIndex={setCurrentIndex}
-        isPlaying={isPlaying}
-        setTmpIntCIValue={setTmpIntCIValue}
-      />
-      <hr color='#007bff'></hr>
-      <h2>{novel.title}</h2>
-      <NovelViewer
-        novel={novel}
-        novelUrl={novelUrl}
-        contentIndex={contentIndex}
-        currentIndex={currentIndex}
-        isPlaying={isPlaying}
-        setIsPlaying={setIsPlaying}
-        setCurrentIndex={setCurrentIndex}
-        setContentIndex={setContentIndex}
-        tmpIntCIValue={tmpIntCIValue}
-        setTmpIntCIValue={setTmpIntCIValue}
-      />
-    </div>
+    <ThemeProvider theme={theme}>
+      <Box>
+        <Typography variant='h4'>青空文庫.split</Typography>
+        <Typography variant='body1'>
+          青空文庫上の小説を短く区切って、順番に表示することで視線を動かさずに読書ができます。<br></br>
+          青空文庫は<Link href="https://www.aozora.gr.jp/index.html">こちら</Link>。募金も<Link href="https://honnomirai.net/">どうぞ</Link>。<br></br>
+          不具合などは<Link href="https://docs.google.com/forms/d/e/1FAIpQLSeSTa4bhIKoLixDe17bOyM_I6cj6uUzKasFalrb8-U72eWc8Q/viewform">こちらに</Link>。
+        </Typography>
+        <Divider variant='middle' />
+        <NovelSelector
+          setContentIndex={setContentIndex}
+          setNovel={setNovel}
+          setNovelUrl={setNovelUrl}
+          novel={novel}
+          novelUrl={novelUrl}
+          setCurrentIndex={setCurrentIndex}
+          isPlaying={isPlaying}
+          setTmpIntCIValue={setTmpIntCIValue}
+        />
+        <Divider variant='middle' />
+        <Typography variant='h5'>{novel.title}</Typography>
+        <NovelViewer
+          novel={novel}
+          novelUrl={novelUrl}
+          contentIndex={contentIndex}
+          currentIndex={currentIndex}
+          isPlaying={isPlaying}
+          setIsPlaying={setIsPlaying}
+          setCurrentIndex={setCurrentIndex}
+          setContentIndex={setContentIndex}
+          tmpIntCIValue={tmpIntCIValue}
+          setTmpIntCIValue={setTmpIntCIValue}
+        />
+      </Box>
+    </ThemeProvider>
  );
 }
 

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import '../App.css';
 import { ImNewTab } from 'react-icons/im';
 import { useLocation } from 'react-router-dom';
 import { Loading } from './Loading';
+import { Box, Button, FormControlLabel, List, ListItem, Radio, TextField, Typography, Link } from '@mui/material';
 
 // カタカナ判定
 const containKatakana = (str) => {
@@ -35,18 +35,18 @@ function PagingButton ({
 
     if (target === null) {
         return (
-        <p style={{height:'50px', width:'50%'}}></p>
+        <Box sx={{height:'50px', width:'50%'}}></Box>
         );
     } else {
         return (
-            <p style={{height:'50px', width:'50%'}}
-                align={isNext ? 'right': 'left'}>
-                <button class='ui-button'
-                            disabled={isPlaying}
-                            onClick={() => handlePage()}>
-                            {word}
-                </button>
-            </p>
+            <Box sx={{height:'50px', width:'50%'}}
+                alignItems={isNext ? 'right': 'left'}>
+                <Button variant='contained'
+                        disabled={isPlaying}
+                        onClick={() => handlePage()}>
+                        <Typography variant='button'>{word}</Typography>
+                </Button>
+            </Box>
             );
     }
 }
@@ -93,46 +93,52 @@ function ResultList ({
         if (saveJson?.result?.length > 0) {
             const fullname = (containKatakana(saveJson.result[0].firstname) && containKatakana(saveJson.result[0].lastname)) ? `${saveJson.result[0].firstname} ${saveJson.result[0].lastname}` : `${saveJson.result[0].lastname} ${saveJson.result[0].firstname}`;
             return (
-                <div>
-                    前回、読んだところから再開しますか？<br></br>
-                    タイトル：{saveJson.result[0].title}<br></br>
-                    著者：{fullname}<br></br>
-                    <button class='ui-button'
+                <Box>
+                    <Typography variant='body1'>
+                        前回、読んだところから再開しますか？<br></br>
+                        タイトル：{saveJson.result[0].title}<br></br>
+                        著者：{fullname}<br></br>
+                    </Typography>
+                    <Button variant='contained'
                         disabled={isPlaying}
                         onClick={() => restoreSaveNovel()}>
-                        再開
-                    </button>
-                </div>
+                        <Typography variant='button'>再開</Typography>
+                    </Button>
+                </Box>
             );
         }
         return (
-            <p>読みたい小説を検索しましょう。</p>
+            <Box>
+                <Typography variant='subtitle1'>読みたい小説を検索しましょう。</Typography>
+            </Box>
         );
     } else if (searchResult.length === 0 ) {
         return (
-            <p>キーワードに当てはまるものが見つかりません。</p>
+            <Box>
+                <Typography variant='subtitle1'>キーワードに当てはまるものが見つかりません。</Typography>
+            </Box>
         );
     } else if(isBook) {
         const list = searchResult.map((book) => {
             const fullname = (containKatakana(book.firstname) && containKatakana(book.lastname)) ? `${book.firstname} ${book.lastname}` : `${book.lastname} ${book.firstname}`;
             // console.log(book.html_url);
             return (
-                <li>
-                    <p>
-                        <h4>{book.title}</h4>
-                        <h5>{fullname}</h5>
-                        <a href={book.card_url} target="_blank" rel="noopener noreferrer">詳細<ImNewTab/></a> 
-                        <button class='read-button'
-                        disabled={isPlaying || !regexPattern.test(book.html_url)}
-                        onClick={() => handleNovelUrl(book.html_url)}>
-                        {regexPattern.test(book.html_url) ? '読む' : '非対応'}
-                        </button>
-                    </p>
-                </li>
+                <ListItem sx={{flexBasis:'50%'}}>
+                    <Box>
+                        <Typography variant='h6'>{book.title}</Typography>
+                        <Typography variant='subtitle1'>{fullname}</Typography>
+                        <Link href={book.card_url} target="_blank" rel="noopener noreferrer">詳細<ImNewTab/></Link> 
+                        <Button variant='contained'
+                            disabled={isPlaying || !regexPattern.test(book.html_url)}
+                            onClick={() => handleNovelUrl(book.html_url)}>
+                            <Typography variant='button'>{regexPattern.test(book.html_url) ? '読む' : '非対応'}</Typography>
+                        </Button>
+                    </Box>
+                </ListItem>
             );
         });
 
-        return (<ol>{list}</ol>);
+        return (<List sx={{display:'flex', flexWrap:'wrap'}}>{list}</List>);
     } else {
         const handleSearch = async (index) => {
             const json = await searchZorapi(3,`${searchResult[index].lastname} ${searchResult[index].firstname}`);
@@ -145,25 +151,25 @@ function ResultList ({
             const fullname = kanaFlag ? `${person.firstname} ${person.lastname}` : `${person.lastname} ${person.firstname}`;
             const fullname_yomi = kanaFlag ? `${person.firstname_yomi} ${person.lastname_yomi}` : `${person.lastname_yomi} ${person.firstname_yomi}`;
             return (
-                <li>
-                    <p>
-                        <h4>{fullname}</h4>
-                        <h5>{fullname_yomi}</h5>
-                        <button class='read-button'
-                        disabled={isPlaying}
-                        onClick={() => handleSearch(index)}>
-                        著作検索
-                        </button>
-                    </p>
-                </li>
+                <ListItem sx={{flexBasis:'50%'}}>
+                    <Box>
+                        <Typography>{fullname}</Typography>
+                        <Typography>{fullname_yomi}</Typography>
+                        <Button variant='contained'
+                            disabled={isPlaying}
+                            onClick={() => handleSearch(index)}>
+                            著作検索
+                        </Button>
+                    </Box>
+                </ListItem>
             );
         });
 
-        return (<ol>{list}</ol>);
+        return (<List sx={{display:'flex', flexWrap:'wrap'}}>{list}</List>);
     }
 }
 
-export default function NovelChoicer ({
+export default function NovelSelector ({
         novel,
         novelUrl,
         setContentIndex,
@@ -261,76 +267,80 @@ export default function NovelChoicer ({
     //-----------
 
     return (
-        <div>
-            <div class='novel_choicer'>
-                <div class='search_ui'>
-                    <div display='flex'>
-                    <input
-                        type='text'
-                        value={keyword}
-                        onChange={(event) => handleKeyword(event)}
-                        disabled={isPlaying}
-                    />
-                    <button class='ui-button'
-                        disabled={isPlaying}
-                        onClick={() => getSearchResult()}>
-                        検索
-                    </button>
-                    </div>
-                    <div display='flex'>
-                    <label>
-                        <input
-                            type="radio"
-                            value="1"
+        <Box>
+            <Box sx={{display: 'flex',}}>
+                <TextField
+                    type='text'
+                    value={keyword}
+                    onChange={(event) => handleKeyword(event)}
+                    disabled={isPlaying}
+                />
+                <Button variant='contained'
+                    disabled={isPlaying}
+                    onClick={() => getSearchResult()}>
+                    <Typography variant='button'>検索</Typography>
+                </Button>
+                <FormControlLabel
+                    value='1'
+                    control={
+                        <Radio
                             checked={searchMode === 1}
-                            onChange={(event) => handleSearchMode(event)}
+                            onChange={handleSearchMode}
                         />
-                        書名検索
-                    </label>
-                    <label>
-                        <input
-                            type="radio"
-                            value="2"
+                    }
+                    label='署名検索'
+                />
+                <FormControlLabel
+                    value='2'
+                    control={
+                        <Radio
                             checked={searchMode === 2}
-                            onChange={(event) => handleSearchMode(event)}
+                            onChange={handleSearchMode}
                         />
-                        著者検索　
-                    </label>
-                    </div>
-                    <p style={{height:'25px'}}><b> {statusNovelUrl}</b></p>
-                    <Loading statusNovelUrl={statusNovelUrl} />
-                </div>
-                <div class='contents_list_box'>
-                    <ResultList 
-                        searchResult={searchResult}
-                        handleNovelUrl={handleNovelUrl}
-                        isBook={isBook}
-                        isPlaying={isPlaying}
-                        setIsBook={setIsBook}
-                        setSearchResult={setSearchResult}
-                        setLinks={setLinks}
-                        setInitFlag={setInitFlag}
-                    />
-                </div>
-                <div style={{display:'flex'}}>
-                    <PagingButton
-                        isNext={false}
-                        target={links.prev}
-                        isPlaying={isPlaying}
-                        setIsBook={setIsBook}
-                        setSearchResult={setSearchResult}
-                        setLinks={setLinks}
-                    />
-                    <PagingButton
-                        isNext={true}
-                        target={links.next}
-                        isPlaying={isPlaying}
-                        setIsBook={setIsBook}
-                        setSearchResult={setSearchResult}
-                        setLinks={setLinks}
-                    />
-                </div>
-            </div>
-        </div>
+                    }
+                    label='著者検索　'
+                />
+                <Box sx={{height:'25px'}}><Typography variant='subtitle1'> {statusNovelUrl}</Typography></Box>
+                <Loading statusNovelUrl={statusNovelUrl} />
+            </Box>
+            <Box sx={{
+                bgcolor: 'background.paper',
+                boxShadow: 1,
+                borderRadius: 2,
+                p: 2,
+                height: 200,
+                overflow: 'hidden',
+                overflowY: 'scroll',
+            }}>
+                <ResultList 
+                    searchResult={searchResult}
+                    handleNovelUrl={handleNovelUrl}
+                    isBook={isBook}
+                    isPlaying={isPlaying}
+                    setIsBook={setIsBook}
+                    setSearchResult={setSearchResult}
+                    setLinks={setLinks}
+                    setInitFlag={setInitFlag}
+                />
+            </Box>
+            <Box sx={{display:'flex'}}>
+                <PagingButton
+                    isNext={false}
+                    target={links.prev}
+                    isPlaying={isPlaying}
+                    setIsBook={setIsBook}
+                    setSearchResult={setSearchResult}
+                    setLinks={setLinks}
+                />
+                <PagingButton
+                    isNext={true}
+                    target={links.next}
+                    isPlaying={isPlaying}
+                    setIsBook={setIsBook}
+                    setSearchResult={setSearchResult}
+                    setLinks={setLinks}
+                />
+            </Box>
+        </Box>
     );
 }
