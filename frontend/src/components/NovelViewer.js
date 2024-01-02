@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import NovelPlayer from './NovelPlayer';
 import ChapterViewer from './ChapterViewer';
-import { FlexBox } from './MyBox';
+import { ViewerBox } from './MyBox';
 
 export default function NovelViewer ({
     isPlaying,
@@ -67,7 +67,7 @@ export default function NovelViewer ({
     };    
 
     return (
-        <FlexBox>
+        <ViewerBox>
             <NovelPlayer
                 novel={novel}
                 novelUrl={novelUrl}
@@ -91,6 +91,6 @@ export default function NovelViewer ({
                 setContentIndex={setContentIndex}
                 setTmpIntCIValue={setTmpIntCIValue}
             />
-        </FlexBox>
+        </ViewerBox>
     );
 }

@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { Loading } from './Loading';
 import { Box, Button, FormControlLabel, List, ListItem, Radio, Typography } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { DefaultBox, FlexBox, FlexHandlerBox, ListItemBox, PaperBox } from './MyBox';
+import { DefaultBox, FlexBox, FlexHandlerBox, FlexMdBox, ListItemBox, PaperBox } from './MyBox';
 import { DefaultButton, LinkButton } from './MyButton';
 import { DefaultField } from './MyTextField';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -161,7 +161,19 @@ function ResultList ({
         const list = searchResult.map((book) => {
             const fullname = (containKatakana(book.firstname) && containKatakana(book.lastname)) ? `${book.firstname} ${book.lastname}` : `${book.lastname} ${book.firstname}`;
             return (
-                <ListItem disablePadding sx={{flexBasis:'50%', maxWidth: '50%'}}>
+                <ListItem
+                    disablePadding
+                    sx={{
+                        flexBasis: {
+                            xs: '100%',
+                            md: '50%',
+                        },
+                        maxWidth: {
+                            xs: '100%',
+                            md: '50%',
+                        },
+                    }}
+                >
                     <ListItemBox>
                         <Typography noWrap variant='h6'>{book.title}</Typography>
                         <Typography noWrap variant='subtitle1'>{fullname}</Typography>
@@ -196,7 +208,19 @@ function ResultList ({
             const fullname = kanaFlag ? `${person.firstname} ${person.lastname}` : `${person.lastname} ${person.firstname}`;
             const fullname_yomi = kanaFlag ? `${person.firstname_yomi} ${person.lastname_yomi}` : `${person.lastname_yomi} ${person.firstname_yomi}`;
             return (
-                <ListItem disablePadding sx={{flexBasis:'50%'}}>
+                <ListItem
+                    disablePadding
+                    sx={{
+                        flexBasis: {
+                            xs: '100%',
+                            md: '50%',
+                        },
+                        maxWidth: {
+                            xs: '100%',
+                            md: '50%',
+                        },
+                    }}
+                >
                     <ListItemBox>
                         <Typography noWrap variant='h6'>{fullname}</Typography>
                         <Typography noWrap variant='subtitle1'>{fullname_yomi}</Typography>
@@ -313,7 +337,7 @@ export default function NovelSelector ({
 
     return (
         <Box>
-            <FlexBox>
+            <FlexMdBox>
                 <FlexHandlerBox>
                     <DefaultField
                         value={keyword}
@@ -338,7 +362,7 @@ export default function NovelSelector ({
                                 onChange={handleSearchMode}
                             />
                         }
-                        label='署名検索'
+                        label='署名'
                     />
                     <FormControlLabel
                         value='2'
@@ -348,14 +372,12 @@ export default function NovelSelector ({
                                 onChange={handleSearchMode}
                             />
                         }
-                        label='著者検索'
+                        label='著者'
                     />
-                </FlexBox>
-                <FlexBox>
                     <Typography variant='subtitle1'> {statusNovelUrl}</Typography>
                     <Loading statusNovelUrl={statusNovelUrl} />
                 </FlexBox>
-            </FlexBox>
+            </FlexMdBox>
             <PaperBox>
                 <ResultList 
                     searchResult={searchResult}

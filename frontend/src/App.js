@@ -7,7 +7,7 @@ import NovelViewer from './components/NovelViewer';
 import { Box, Divider, Typography, Link, createTheme, responsiveFontSizes, CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 import { grey } from '@mui/material/colors';
-import { DefaultBox } from './components/MyBox';
+import { DefaultBox, NoWrapBox } from './components/MyBox';
 
 function App() {
   //小説情報
@@ -36,6 +36,13 @@ function App() {
         background: {
           default: grey[200],
         },
+      },
+      breakpoints: {
+        values: {
+          xs: 0,
+          md: 750,
+          lg: 1100,
+        }
       },
       typography: {
         h4: {
@@ -82,9 +89,9 @@ function App() {
           setTmpIntCIValue={setTmpIntCIValue}
         />
         <Divider variant='middle' />
-        <DefaultBox>
-          <Typography variant='h5'>{novel.title}</Typography>
-        </DefaultBox>
+        <NoWrapBox>
+          <Typography noWrap variant='h5'>{novel.title}</Typography>
+        </NoWrapBox>
         <NovelViewer
           novel={novel}
           novelUrl={novelUrl}

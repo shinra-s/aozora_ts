@@ -44,6 +44,7 @@ export function NumberField ({
             sx={{
                 bgcolor: 'background.paper',
                 mx: '5px',
+                mt: 1,
             }}
         />
     );

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import parse from 'html-react-parser';
 import { Card, CardContent, Checkbox, Divider, FormControlLabel, Slider, Typography } from '@mui/material';
-import { DefaultBox, DefaultHandlerBox, FlexBox, FlexHandlerBox, HalfBox } from './MyBox';
+import { DefaultBox, DefaultHandlerBox, FlexBox, FlexLgHandlerBox, FlexMdHandlerBox, HalfBox, NoWrapBox, SaveBox } from './MyBox';
 import { DefaultButton } from './MyButton';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
@@ -117,7 +117,7 @@ function SeekHandler ({
     };
 
     return (
-        <FlexHandlerBox>
+        <FlexMdHandlerBox>
             <NumberField
               label='再生位置'
               value={tmpIntCIValue}
@@ -126,7 +126,10 @@ function SeekHandler ({
             />
             <Slider
               sx={{
-                width: '50%',
+                width: {
+                  xs: '75%',
+                  md: '50%',
+                },
                 mx: 2,
               }}
               value={tmpIntCIValue}
@@ -145,7 +148,7 @@ function SeekHandler ({
                 },
               ]}
             />
-        </FlexHandlerBox>
+        </FlexMdHandlerBox>
     );
 }
 
@@ -270,7 +273,7 @@ function ViewSaveState ({
     }
 
     return (
-      <DefaultBox>
+      <SaveBox>
         <Typography variant='body1' sx={{p: 2,}}>
           タイトル：{novel.title}<br></br>
           章：{novel.mainText[saveState.conIndex][0]}<br></br>
@@ -289,7 +292,7 @@ function ViewSaveState ({
         >
           <Typography variant='button'>共有</Typography>
         </DefaultButton>
-      </DefaultBox>
+      </SaveBox>
     );
   }
 }
@@ -355,13 +358,15 @@ export default function NovelPlayer ({
 
     return (
         <HalfBox>
-            <Typography variant='h6'>著者：{novel.author}</Typography>
+            <NoWrapBox>
+              <Typography noWrap variant='h6'>著者：{novel.author}</Typography>
+            </NoWrapBox>
             <DisplayCard
                 novel={novel}
                 contentIndex={contentIndex}
                 currentIndex={currentIndex}
             />
-            <FlexHandlerBox>
+            <FlexLgHandlerBox>
               <PlayHandler
                   isPlaying={isPlaying}
                   isConPlay={isConPlay}
@@ -372,7 +377,7 @@ export default function NovelPlayer ({
                   isPlaying={isPlaying}
                   setWpm={setWpm}
               />
-            </FlexHandlerBox>
+            </FlexLgHandlerBox>
             <Divider variant='middle' />
             <SeekHandler
                 novel={novel}
@@ -391,6 +396,15 @@ export default function NovelPlayer ({
                 novelUrl={novelUrl}
                 contentIndex={contentIndex}
                 currentIndex={currentIndex}
+            />
+            <Divider
+              variant='middle'
+              sx={{
+                color:{
+                  xs: null,
+                  md: 'background.default',
+                }
+              }}
             />
         </HalfBox>
     );

@@ -13,6 +13,32 @@ export function DefaultBox ({ children }) {
     );
 };
 
+export function SaveBox ({ children }) {
+    return (
+        <Box
+            sx={{
+                my: '5px',
+                overflowWrap: 'anywhere',
+            }}
+        >
+            {children}
+        </Box>
+    );
+};
+
+export function NoWrapBox ({ children }) {
+    return (
+        <Box
+            sx={{
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+            }}
+        >
+            {children}
+        </Box>
+    );
+};
+
 export function DefaultHandlerBox ({ children }) {
     return (
         <Box
@@ -30,7 +56,10 @@ export function HalfBox ({ children }) {
         <Box
             sx={{
                 m: '5px',
-                width: '50%',
+                width: {
+                    xs: '100%',
+                    md: '50%',
+                },
             }}
         >
             {children}
@@ -44,6 +73,38 @@ export function FlexBox ({ children }) {
             sx={{
                 my: '5px',
                 display: 'flex',
+            }}
+        >
+            {children}
+        </Box>
+    );
+};
+
+export function FlexMdBox ({ children }) {
+    return (
+        <Box
+            sx={{
+                my: '5px',
+                display: {
+                    xs: 'block',
+                    md: 'flex',
+                },
+            }}
+        >
+            {children}
+        </Box>
+    );
+};
+
+export function ViewerBox ({ children }) {
+    return (
+        <Box
+            sx={{
+                my: '5px',
+                display: {
+                    xs: 'block',
+                    md: 'flex',
+                }
             }}
         >
             {children}
@@ -65,6 +126,40 @@ export function FlexHandlerBox ({ children }) {
     );
 };
 
+export function FlexLgHandlerBox ({ children }) {
+    return (
+        <Box
+            sx={{
+                display: {
+                    xs: 'block',
+                    lg: 'flex',
+                },
+                p: 2,
+                alignItems: 'center',
+            }}
+        >
+            {children}
+        </Box>
+    );
+};
+
+export function FlexMdHandlerBox ({ children }) {
+    return (
+        <Box
+            sx={{
+                display: {
+                    xs: 'block',
+                    md: 'flex',
+                },
+                p: 2,
+                alignItems: 'center',
+            }}
+        >
+            {children}
+        </Box>
+    );
+};
+
 export function PaperBox ({ children }) {
     return (
         <Box
@@ -76,6 +171,7 @@ export function PaperBox ({ children }) {
                 height: 200,
                 overflow: 'hidden',
                 overflowY: 'scroll',
+                px: '5px',
             }}
         >
             {children}
