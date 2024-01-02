@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import parse from 'html-react-parser';
-import { Button, Card, CardContent, Checkbox, FormControlLabel, Slider, TextField, Typography } from '@mui/material';
-import { DefaultBox, FlexBox, HalfBox } from './MyBox';
+import { Card, CardContent, Checkbox, Divider, FormControlLabel, Slider, Typography } from '@mui/material';
+import { DefaultBox, DefaultHandlerBox, FlexBox, FlexHandlerBox, HalfBox } from './MyBox';
+import { DefaultButton } from './MyButton';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import PauseIcon from '@mui/icons-material/Pause';
+import { NumberField } from './MyTextField';
+import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import ShareIcon from '@mui/icons-material/Share';
 
 //再生文字列表示カード
 function DisplayCard ({
@@ -20,11 +27,13 @@ function DisplayCard ({
     return (
         <DefaultBox>
           <Card sx={{
-            minHeight: 70,
-            textAlign: 'center',
+            display: 'flex',
+            minHeight: 200,
+            justifyContent: 'center',
+            alignItems: 'center',
           }}>
               <CardContent>
-                <Typography variant='subtitle1'>{parseBunsetsu(novel?.mainText?.[contentIndex]?.[1]?.[currentIndex] ?? '')}</Typography>
+                <Typography variant='h6'>{parseBunsetsu(novel?.mainText?.[contentIndex]?.[1]?.[currentIndex] ?? '')}</Typography>
               </CardContent>
           </Card>
         </DefaultBox>
@@ -40,16 +49,25 @@ function PlayHandler ({
 }) {
     return (
         <FlexBox>
-            <Button variant='contained' onClick={() => setIsPlaying(prevIsPlaying => !prevIsPlaying)}>
+            <DefaultButton
+              onClick={() => setIsPlaying(prevIsPlaying => !prevIsPlaying)}
+              endIcon={isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
+            >
               <Typography variant='button'>{isPlaying ? '停止' : '再生'}</Typography>
-            </Button>
+            </DefaultButton>
             <FormControlLabel
-              label='連続再生（章終わりで停止しない）'
+              label='：章連続再生'
+              sx={{
+                mx: 2,
+              }}
               control={
                 <Checkbox
                   checked={isConPlay}
                   onChange={() => setIsConPlay(prevState => !prevState)}
                   disabled={isPlaying}
+                  sx={{
+                    p: 0,
+                  }}
                 />
               }
             />
@@ -99,23 +117,35 @@ function SeekHandler ({
     };
 
     return (
-        <FlexBox>
-            <Typography variant='body1'>再生位置：</Typography>
+        <FlexHandlerBox>
+            <NumberField
+              label='再生位置'
+              value={tmpIntCIValue}
+              onChange={handleTmpCIChange}
+              disabled={isPlaying}
+            />
             <Slider
+              sx={{
+                width: '50%',
+                mx: 2,
+              }}
               value={tmpIntCIValue}
               min={0}
               max={novel.mainText[contentIndex][1]?.length - 1}
               disabled={isPlaying}
               onChange={handleTmpCIChange}
+              marks={[
+                {
+                  value: 0,
+                  label: '0',
+                },
+                {
+                  value: novel.mainText[contentIndex][1]?.length - 1,
+                  label: `${novel.mainText[contentIndex][1]?.length - 1}`,
+                },
+              ]}
             />
-            <TextField
-              type='number'
-              value={tmpIntCIValue}
-              onChange={handleTmpCIChange}
-              disabled={isPlaying}
-            />
-            <Typography variant='body1'>（0 〜 {novel.mainText[contentIndex][1].length - 1}）</Typography>
-        </FlexBox>
+        </FlexHandlerBox>
     );
 }
 
@@ -151,16 +181,13 @@ function WpmHandler ({
     };
 
     return (
-        <FlexBox>
-            <Typography variant='body1'>表示速度：</Typography>
-            <TextField
-              type='number'
-              value={tmpWpm}
-              onChange={handleTmpWpmChange}
-              disabled={isPlaying}
-            />
-            <Typography variant='body1'>単語/分（60〜600）</Typography>
-        </FlexBox>
+      <NumberField
+        label='表示速度'
+        value={tmpWpm}
+        onChange={handleTmpWpmChange}
+        disabled={isPlaying}
+        helperText='単語/分（60〜600）'
+      />
     );
 }
 
@@ -170,6 +197,7 @@ function SaveHandler ({
   novelUrl,
   contentIndex,
   currentIndex,
+  isPlaying,
 }) {
 
   const [saveState, setSaveState] = useState(null);
@@ -188,15 +216,19 @@ function SaveHandler ({
   };
 
   return (
-    <DefaultBox>
-      <Button variant='contained' onClick={() => updateSaveState()}>
+    <DefaultHandlerBox>
+      <DefaultButton
+        disabled={isPlaying}
+        onClick={() => updateSaveState()}
+        endIcon={<BookmarkAddIcon />}
+      >
         <Typography variant='button'>しおりを挟む</Typography>
-      </Button>
+      </DefaultButton>
       <ViewSaveState 
         saveState={saveState}
         novel={novel}
       />
-    </DefaultBox>
+    </DefaultHandlerBox>
   )
 }
 
@@ -239,18 +271,24 @@ function ViewSaveState ({
 
     return (
       <DefaultBox>
-        <Typography variant='body1'>
+        <Typography variant='body1' sx={{p: 2,}}>
           タイトル：{novel.title}<br></br>
           章：{novel.mainText[saveState.conIndex][0]}<br></br>
           位置：{saveState.curIndex}<br></br>
           次回アクセス：{shareUrl}<br></br>
         </Typography>
-        <Button variant='contained' onClick={() => handleCopyToClipboard()}>
+        <DefaultButton
+          onClick={() => handleCopyToClipboard()}
+          endIcon={<ContentCopyIcon />}
+        >
           <Typography variant='button'>URLコピー</Typography>
-        </Button>
-        <Button variant='contained' onClick={() => handleXShare()}>
+        </DefaultButton>
+        <DefaultButton
+          onClick={() => handleXShare()}
+          endIcon={<ShareIcon />}
+        >
           <Typography variant='button'>共有</Typography>
-        </Button>
+        </DefaultButton>
       </DefaultBox>
     );
   }
@@ -323,12 +361,19 @@ export default function NovelPlayer ({
                 contentIndex={contentIndex}
                 currentIndex={currentIndex}
             />
-            <PlayHandler
-                isPlaying={isPlaying}
-                isConPlay={isConPlay}
-                setIsPlaying={setIsPlaying}
-                setIsConPlay={setIsConPlay}
-            />
+            <FlexHandlerBox>
+              <PlayHandler
+                  isPlaying={isPlaying}
+                  isConPlay={isConPlay}
+                  setIsPlaying={setIsPlaying}
+                  setIsConPlay={setIsConPlay}
+              />
+              <WpmHandler
+                  isPlaying={isPlaying}
+                  setWpm={setWpm}
+              />
+            </FlexHandlerBox>
+            <Divider variant='middle' />
             <SeekHandler
                 novel={novel}
                 contentIndex={contentIndex}
@@ -339,11 +384,9 @@ export default function NovelPlayer ({
                 setAllString={setAllString}
                 toAllString={toAllString}
             />
-            <WpmHandler
-                isPlaying={isPlaying}
-                setWpm={setWpm}
-            />
+            <Divider variant='middle' />
             <SaveHandler
+                isPlaying={isPlaying}
                 novel={novel}
                 novelUrl={novelUrl}
                 contentIndex={contentIndex}

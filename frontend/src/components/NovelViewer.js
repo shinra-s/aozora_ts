@@ -57,7 +57,7 @@ export default function NovelViewer ({
 
             //表示中の箇所を赤く強調
             if (index === target) {
-              tmpString += '<font color="red">'+str+'</font>';
+              tmpString += '<font color="#1976d2">'+str+'</font>';
             } else {
               tmpString += str;
             }

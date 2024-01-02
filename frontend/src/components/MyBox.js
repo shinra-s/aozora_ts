@@ -13,6 +13,18 @@ export function DefaultBox ({ children }) {
     );
 };
 
+export function DefaultHandlerBox ({ children }) {
+    return (
+        <Box
+            sx={{
+                p: 2,
+            }}
+        >
+            {children}
+        </Box>
+    );
+};
+
 export function HalfBox ({ children }) {
     return (
         <Box
@@ -32,6 +44,20 @@ export function FlexBox ({ children }) {
             sx={{
                 my: '5px',
                 display: 'flex',
+            }}
+        >
+            {children}
+        </Box>
+    );
+};
+
+export function FlexHandlerBox ({ children }) {
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                p: 2,
+                alignItems: 'center',
             }}
         >
             {children}

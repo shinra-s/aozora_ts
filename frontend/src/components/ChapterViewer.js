@@ -1,7 +1,8 @@
 import React from 'react';
 import parse from 'html-react-parser';
-import { List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
+import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
 import { DefaultBox, HalfBox, PaperBox } from './MyBox';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 //章のリスト
 function ChapterList({
@@ -30,6 +31,9 @@ function ChapterList({
                         selected={index === contentIndex}
                         onClick={() => changeContentIndex(index)}
                     >
+                        <ListItemIcon>
+                            <ArrowForwardIosIcon color={index === contentIndex ? 'primary' : null} />
+                        </ListItemIcon>
                         <ListItemText primary={item[0]} />
                     </ListItemButton>
                 </ListItem>

@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { ImNewTab } from 'react-icons/im';
 import { useLocation } from 'react-router-dom';
 import { Loading } from './Loading';
-import { Box, Button, FormControlLabel, List, ListItem, Radio, TextField, Typography, Link } from '@mui/material';
-import { DefaultBox, FlexBox, ListItemBox, PaperBox } from './MyBox';
+import { Box, Button, FormControlLabel, List, ListItem, Radio, Typography } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import { DefaultBox, FlexBox, FlexHandlerBox, ListItemBox, PaperBox } from './MyBox';
+import { DefaultButton, LinkButton } from './MyButton';
+import { DefaultField } from './MyTextField';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ReplayIcon from '@mui/icons-material/Replay';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import FileDownloadOffIcon from '@mui/icons-material/FileDownloadOff';
 
 // カタカナ判定
 const containKatakana = (str) => {
@@ -45,13 +53,16 @@ function PagingButton ({
                     height:'50px',
                     width:'50%',
                     flexDirection: 'row-reverse',
+                    alignItems: 'center',
                 }}
             >
-                <Button variant='contained'
-                        disabled={isPlaying}
-                        onClick={() => handlePage()}>
+                <DefaultButton             
+                    disabled={isPlaying}
+                    onClick={() => handlePage()}
+                    endIcon={<ArrowForwardIosIcon />}
+                >
                         <Typography variant='button'>次へ</Typography>
-                </Button>
+                </DefaultButton>
             </Box>
             );
     } else {
@@ -62,13 +73,16 @@ function PagingButton ({
                     height:'50px',
                     width:'50%',
                     flexDirection: 'row',
+                    alignItems: 'center',
                 }}
             >
-                <Button variant='contained'
-                        disabled={isPlaying}
-                        onClick={() => handlePage()}>
+                <DefaultButton             
+                    disabled={isPlaying}
+                    onClick={() => handlePage()}
+                    startIcon={<ArrowBackIosIcon />}
+                >
                         <Typography variant='button'>前へ</Typography>
-                </Button>
+                </DefaultButton>
             </Box>
             );
     }
@@ -122,11 +136,13 @@ function ResultList ({
                         タイトル：{saveJson.result[0].title}<br></br>
                         著者：{fullname}<br></br>
                     </Typography>
-                    <Button variant='contained'
+                    <DefaultButton
+                        endIcon={<ReplayIcon />}
                         disabled={isPlaying}
-                        onClick={() => restoreSaveNovel()}>
+                        onClick={() => restoreSaveNovel()}
+                    >
                         <Typography variant='button'>再開</Typography>
-                    </Button>
+                    </DefaultButton>
                 </DefaultBox>
             );
         }
@@ -144,18 +160,24 @@ function ResultList ({
     } else if(isBook) {
         const list = searchResult.map((book) => {
             const fullname = (containKatakana(book.firstname) && containKatakana(book.lastname)) ? `${book.firstname} ${book.lastname}` : `${book.lastname} ${book.firstname}`;
-            // console.log(book.html_url);
             return (
                 <ListItem disablePadding sx={{flexBasis:'50%', maxWidth: '50%'}}>
                     <ListItemBox>
                         <Typography noWrap variant='h6'>{book.title}</Typography>
                         <Typography noWrap variant='subtitle1'>{fullname}</Typography>
-                        <Link href={book.card_url} target="_blank" rel="noopener noreferrer">詳細<ImNewTab/></Link> 
-                        <Button variant='contained'
+                        <LinkButton
+                            href={book.card_url}
+                            endIcon={<OpenInNewIcon />}
+                        >
+                            <Typography variant='button'>詳細</Typography>
+                        </LinkButton> 
+                        <DefaultButton
                             disabled={isPlaying || !regexPattern.test(book.html_url)}
-                            onClick={() => handleNovelUrl(book.html_url)}>
+                            onClick={() => handleNovelUrl(book.html_url)}
+                            endIcon={regexPattern.test(book.html_url) ? <FileDownloadIcon /> : <FileDownloadOffIcon />}
+                        >
                             <Typography variant='button'>{regexPattern.test(book.html_url) ? '読む' : '非対応'}</Typography>
-                        </Button>
+                        </DefaultButton>
                     </ListItemBox>
                 </ListItem>
             );
@@ -292,39 +314,47 @@ export default function NovelSelector ({
     return (
         <Box>
             <FlexBox>
-                <TextField
-                    type='text'
-                    value={keyword}
-                    onChange={(event) => handleKeyword(event)}
-                    disabled={isPlaying}
-                />
-                <Button variant='contained'
-                    disabled={isPlaying}
-                    onClick={() => getSearchResult()}>
-                    <Typography variant='button'>検索</Typography>
-                </Button>
-                <FormControlLabel
-                    value='1'
-                    control={
-                        <Radio
-                            checked={searchMode === 1}
-                            onChange={handleSearchMode}
-                        />
-                    }
-                    label='署名検索'
-                />
-                <FormControlLabel
-                    value='2'
-                    control={
-                        <Radio
-                            checked={searchMode === 2}
-                            onChange={handleSearchMode}
-                        />
-                    }
-                    label='著者検索　'
-                />
-                <Box sx={{height:'25px'}}><Typography variant='subtitle1'> {statusNovelUrl}</Typography></Box>
-                <Loading statusNovelUrl={statusNovelUrl} />
+                <FlexHandlerBox>
+                    <DefaultField
+                        value={keyword}
+                        onChange={(event) => handleKeyword(event)}
+                        disabled={isPlaying}
+                        label='キーワード'
+                    />
+                    <DefaultButton
+                        disabled={isPlaying}
+                        onClick={() => getSearchResult()}
+                        endIcon={<SearchIcon />}
+                    >
+                        <Typography variant='button'>検索</Typography>
+                    </DefaultButton>
+                </FlexHandlerBox>
+                <FlexBox>
+                    <FormControlLabel
+                        value='1'
+                        control={
+                            <Radio
+                                checked={searchMode === 1}
+                                onChange={handleSearchMode}
+                            />
+                        }
+                        label='署名検索'
+                    />
+                    <FormControlLabel
+                        value='2'
+                        control={
+                            <Radio
+                                checked={searchMode === 2}
+                                onChange={handleSearchMode}
+                            />
+                        }
+                        label='著者検索'
+                    />
+                </FlexBox>
+                <FlexBox>
+                    <Typography variant='subtitle1'> {statusNovelUrl}</Typography>
+                    <Loading statusNovelUrl={statusNovelUrl} />
+                </FlexBox>
             </FlexBox>
             <PaperBox>
                 <ResultList 
